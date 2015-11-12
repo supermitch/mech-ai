@@ -5,4 +5,4 @@ threadsafe: true
 
 handlers:
 - url: /.*
-  script: helloworld.app
+  script: app.app
