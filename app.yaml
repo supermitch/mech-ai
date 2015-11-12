@@ -12,3 +12,6 @@ libraries:
 handlers:
 - url: /.*
   script: app.app
+
+skip_files:
+- ^(.*/)?\venv
