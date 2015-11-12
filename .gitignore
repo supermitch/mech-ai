@@ -58,3 +58,6 @@ target/
 
 # Node
 node_modules/  # Allow npm to resolve dependencies
+
+# VirtualEnv
+venv/
