@@ -19,7 +19,10 @@ class IndexHandler(BaseHandler):
 class RegistrationHandler(webapp2.RequestHandler):
     def post(self):
         json_object = json.loads(self.request.body)
-        self.response.write('Registration Received {}'.format(json_object))
+        if not 'username' in json_object:
+            webapp2.abort(422, detail='Field "username" is required')
+        else:
+            self.response.write('Registration Received {}'.format(json_object))
 
 class GamesHandler(webapp2.RequestHandler):
     def post(self):
