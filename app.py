@@ -1,3 +1,4 @@
+import json
 import os
 import webapp2
 from webapp2_extras import jinja2
@@ -17,7 +18,8 @@ class IndexHandler(BaseHandler):
 
 class RegistrationHandler(webapp2.RequestHandler):
     def post(self):
-        self.response.write('Registration Received')
+        json_object = json.loads(self.request.body)
+        self.response.write('Registration Received {}'.format(json_object))
 
 class GamesHandler(webapp2.RequestHandler):
     def post(self):
