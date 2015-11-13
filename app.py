@@ -16,13 +16,24 @@ class IndexHandler(BaseHandler):
   def get(self):
     self.render_template('index.html', name=self.request.get('name'))
 
+
 class RegistrationHandler(webapp2.RequestHandler):
     def post(self):
+        """ Generates and returns an access token for a POSTed username. """
         json_object = json.loads(self.request.body)
         if not 'username' in json_object:
             webapp2.abort(422, detail='Field "username" is required')
-        else:
-            self.response.write('Registration Received {}'.format(json_object))
+
+        username = json_object['username']
+        self.response.content_type = 'application/json'
+        content = {
+            'username': username,
+            'message': 'Success',
+            'token': '435hfvbns93',
+            'email': json_object.get('email', None)
+        }
+        self.response.write(json.dumps(content))
+
 
 class GamesHandler(webapp2.RequestHandler):
     def post(self):
