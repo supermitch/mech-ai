@@ -15,12 +15,16 @@ class IndexHandler(BaseHandler):
   def get(self):
     self.render_template('index.html', name=self.request.get('name'))
 
+class RegistrationHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.write('Registration Received')
 
-class MainPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, World!\nWelcome to Mech AI.')
+class GamesHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.write('Game Received')
 
 app = webapp2.WSGIApplication([
-    ('/', IndexHandler),
+    webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
+    webapp2.Route('/register', handler=RegistrationHandler, name='registration', methods=['POST']),
+    webapp2.Route('/games', handler=GamesHandler, name='games', methods=['POST']),
 ], debug=True)
