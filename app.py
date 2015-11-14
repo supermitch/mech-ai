@@ -1,9 +1,24 @@
 import json
 import os
+import random
+
 import webapp2
 from webapp2_extras import jinja2
 
 from google.appengine.ext import ndb
+
+def generate_token(n=8):
+    """ Generates an alphanumeric token of length `n`. """
+    import string
+    options = string.digits + string.ascii_lowercase
+    return ''.join(random.choice(options) for _ in range(n))
+
+def generate_unique_token():
+    """ Keep trying until we find an unused access token. """
+    while True:
+        token = generate_token()
+        if User.query(User.access_token==token).get() is None:
+            return token
 
 class User(ndb.Model):
     """ Models a user of the system. Usernames are our only identifiers. """
@@ -31,24 +46,23 @@ class RegistrationHandler(webapp2.RequestHandler):
             webapp2.abort(422, detail='Field "username" is required')
 
         username = json_object['username']
-        exists = User.query(User.username==username).get()
-        if not exists:
-            print('USER NOT FOUND: {}'.format(username))
-            user = User(username=username, access_token='434cat879')
-            user.put()
-
-        if exists:
-            print('EXISTS: {}'.format(exists))
-            content = {
-                    'username': username,
-                    'message': 'Failed: Username already exists',
-            }
-        else:
+        existing_user = User.query(User.username==username).get()
+        if existing_user:
+            print('EXISTS: {}'.format(existing_user))
             content = {
                 'username': username,
-                'message': 'Success',
-                'token': '435hfvbns93',
-                'email': json_object.get('email', None)
+                'message': 'Error: Username already exists',
+            }
+        else:
+            print('USER NOT FOUND: {}'.format(username))
+            access_token = generate_unique_token()
+            user = User(username=username, access_token=access_token)
+            key = user.put()
+            print('USER KEY: {}'.format(key))
+            content = {
+                'message': 'Success: Registration ok',
+                'username': user.username,
+                'token': user.access_token,
             }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
