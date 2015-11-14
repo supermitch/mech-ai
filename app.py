@@ -1,29 +1,12 @@
 import json
 import os
-import random
 
 import webapp2
 from webapp2_extras import jinja2
 
-from google.appengine.ext import ndb
+import tokens
+from models import User, Game, user_repo, game_repo
 
-def generate_token(n=8):
-    """ Generates an alphanumeric token of length `n`. """
-    import string
-    options = string.digits + string.ascii_lowercase
-    return ''.join(random.choice(options) for _ in range(n))
-
-def generate_unique_token():
-    """ Keep trying until we find an unused access token. """
-    while True:
-        token = generate_token()
-        if User.query(User.access_token==token).get() is None:
-            return token
-
-class User(ndb.Model):
-    """ Models a user of the system. Usernames are our only identifiers. """
-    username = ndb.StringProperty(required=True)
-    access_token = ndb.StringProperty(required=True)
 
 class BaseHandler(webapp2.RequestHandler):
   @webapp2.cached_property
@@ -46,7 +29,7 @@ class RegistrationHandler(webapp2.RequestHandler):
             webapp2.abort(422, detail='Field "username" is required')
 
         username = json_object['username']
-        existing_user = User.query(User.username==username).get()
+        existing_user = user_repo.find_by_username(username)
         if existing_user:
             print('EXISTS: {}'.format(existing_user))
             content = {
@@ -55,7 +38,7 @@ class RegistrationHandler(webapp2.RequestHandler):
             }
         else:
             print('USER NOT FOUND: {}'.format(username))
-            access_token = generate_unique_token()
+            access_token = tokens.generate_unique_token()
             user = User(username=username, access_token=access_token)
             key = user.put()
             print('USER KEY: {}'.format(key))
