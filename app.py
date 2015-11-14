@@ -16,6 +16,7 @@ class BaseHandler(webapp2.RequestHandler):
   def render_template(self, filename, **template_args):
         self.response.write(self.jinja2.render_template(filename, **template_args))
 
+
 class IndexHandler(BaseHandler):
   def get(self):
     self.render_template('index.html', name=self.request.get('name'))
@@ -28,24 +29,22 @@ class RegistrationHandler(webapp2.RequestHandler):
         if not 'username' in json_object:
             webapp2.abort(422, detail='Field "username" is required')
 
-        username = json_object['username']
-        existing_user = user_repo.find_by_username(username)
-        if existing_user:
-            print('EXISTS: {}'.format(existing_user))
+        posted_username = json_object['username']
+        existing_user = user_repo.find_by_username(posted_username)
+        if existing_user is None:
+            access_token = tokens.generate_unique_token()
+            user = User(username=posted_username, access_token=access_token)
+            key = user.put()
             content = {
-                'username': username,
-                'message': 'Error: Username already exists',
+                'message': 'Registration succeeded',
+                'username': user.username,
+                'access_token': user.access_token,
             }
         else:
-            print('USER NOT FOUND: {}'.format(username))
-            access_token = tokens.generate_unique_token()
-            user = User(username=username, access_token=access_token)
-            key = user.put()
-            print('USER KEY: {}'.format(key))
             content = {
-                'message': 'Success: Registration ok',
-                'username': user.username,
-                'token': user.access_token,
+                'username': posted_username,
+                'message': 'Registration failed: username already exists',
+                'access_token': None,
             }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
