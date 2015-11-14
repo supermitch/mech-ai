@@ -52,7 +52,19 @@ class RegistrationHandler(webapp2.RequestHandler):
 
 class GamesHandler(webapp2.RequestHandler):
     def post(self):
-        self.response.write('Game Received')
+        json_object = json.loads(self.request.body)
+        players = json_object['players']
+
+        game = Game(players=players)
+        key = game.put()
+        content = {
+            'id': key.id(),
+            'players': game.players,
+            'created': game.created.isoformat(),
+            'message': 'Game creation succeeded',
+        }
+        self.response.content_type = 'application/json'
+        self.response.write(json.dumps(content))
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),

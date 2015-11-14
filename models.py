@@ -6,14 +6,6 @@ class User(ndb.Model):
     username = ndb.StringProperty(required=True)
     access_token = ndb.StringProperty(required=True)
 
-
-class Game(ndb.Model):
-    """ Game """
-    id = ndb.StringProperty(required=True)
-    name = ndb.StringProperty()
-    users = ndb.StringProperty()
-
-
 class UserRepository(object):
     def find_by_username(self, username):
         return User.query(User.username==username).get()
@@ -21,9 +13,17 @@ class UserRepository(object):
     def find_by_access_token(self, access_token):
         return User.query(User.access_token==access_token).get()
 
+user_repo = UserRepository()
+
+
+class Game(ndb.Model):
+    """ Game """
+    name = ndb.StringProperty()
+    players = ndb.StringProperty(repeated=True)
+    created = ndb.DateTimeProperty(auto_now_add=True)
 
 class GameRepository(object):
-    pass
+    def find_by_id(self, id):
+        return Game.query(Game.id==id).get()
 
-user_repo = UserRepository()
 game_repo = GameRepository()
