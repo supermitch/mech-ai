@@ -3,6 +3,12 @@ import os
 import webapp2
 from webapp2_extras import jinja2
 
+from google.appengine.ext import ndb
+
+class User(ndb.Model):
+    """ Models a user of the system. Usernames are our only identifiers. """
+    username = ndb.StringProperty(required=True)
+    access_token = ndb.StringProperty(required=True)
 
 class BaseHandler(webapp2.RequestHandler):
   @webapp2.cached_property
@@ -25,13 +31,26 @@ class RegistrationHandler(webapp2.RequestHandler):
             webapp2.abort(422, detail='Field "username" is required')
 
         username = json_object['username']
+        exists = User.query(User.username==username).get()
+        if not exists:
+            print('USER NOT FOUND: {}'.format(username))
+            user = User(username=username, access_token='434cat879')
+            user.put()
+
+        if exists:
+            print('EXISTS: {}'.format(exists))
+            content = {
+                    'username': username,
+                    'message': 'Failed: Username already exists',
+            }
+        else:
+            content = {
+                'username': username,
+                'message': 'Success',
+                'token': '435hfvbns93',
+                'email': json_object.get('email', None)
+            }
         self.response.content_type = 'application/json'
-        content = {
-            'username': username,
-            'message': 'Success',
-            'token': '435hfvbns93',
-            'email': json_object.get('email', None)
-        }
         self.response.write(json.dumps(content))
 
 
