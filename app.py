@@ -58,7 +58,7 @@ class RegistrationHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(content))
 
 
-class GamesHandler(webapp2.RequestHandler):
+class CreateGameHandler(webapp2.RequestHandler):
     def post(self):
         json_object = json.loads(self.request.body)
         players = json_object['players']
@@ -68,14 +68,36 @@ class GamesHandler(webapp2.RequestHandler):
         content = {
             'id': key.id(),
             'players': game.players,
+            'map': 'default',
             'created': game.created.isoformat(),
             'message': 'Game creation succeeded',
         }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
+class PlayGameHandler(BaseHandler):
+    def post(self):
+        json_object = json.loads(self.request.body)
+
+        required_fields = ['username', 'access_token']
+        self.validate_json_fields(required_fields, json_object)
+
+        username = json_object['username']
+        access_token = json_object['access_token']
+
+        existing_user = user_repo.find_by_username(posted_username)
+
+        content = {
+            'username': username,
+            'message': 'Joined the game',
+        }
+        self.response.content_type = 'application/json'
+        self.response.write(json.dumps(content))
+
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     webapp2.Route('/register', handler=RegistrationHandler, name='registration', methods=['POST']),
-    webapp2.Route('/games', handler=GamesHandler, name='games', methods=['POST']),
+    webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
+    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
 ], debug=True)
