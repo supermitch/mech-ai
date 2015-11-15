@@ -9,17 +9,25 @@ from models import User, Game, user_repo, game_repo
 
 
 class BaseHandler(webapp2.RequestHandler):
-  @webapp2.cached_property
-  def jinja2(self):
+    @webapp2.cached_property
+    def jinja2(self):
         return jinja2.get_jinja2(app=self.app)
 
-  def render_template(self, filename, **template_args):
+    def render_template(self, filename, **template_args):
         self.response.write(self.jinja2.render_template(filename, **template_args))
+
+    def validate_json_fields(self, fields, json_object):
+        messages = []
+        for field in fields:
+            if field not in json_object:
+                messages.append('Field [{}] is required<br />'.format(field))
+        if messages:
+            webapp2.abort(422, detail='\n'.join(messages))
 
 
 class IndexHandler(BaseHandler):
-  def get(self):
-    self.render_template('index.html', name=self.request.get('name'))
+    def get(self):
+        self.render_template('index.html', name=self.request.get('name'))
 
 
 class RegistrationHandler(webapp2.RequestHandler):
@@ -27,7 +35,7 @@ class RegistrationHandler(webapp2.RequestHandler):
         """ Generates and returns an access token for a POSTed username. """
         json_object = json.loads(self.request.body)
         if not 'username' in json_object:
-            webapp2.abort(422, detail='Field "username" is required')
+            webapp2.abort(422, detail='Field [username] is required')
 
         posted_username = json_object['username']
         existing_user = user_repo.find_by_username(posted_username)
