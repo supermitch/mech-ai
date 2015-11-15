@@ -3,6 +3,7 @@ import os
 
 import webapp2
 from webapp2_extras import jinja2
+from google.appengine.api import channel
 
 import tokens
 from models import User, Game, user_repo, game_repo
@@ -85,11 +86,16 @@ class PlayGameHandler(BaseHandler):
         username = json_object['username']
         access_token = json_object['access_token']
 
-        existing_user = user_repo.find_by_username(posted_username)
+        existing_user = user_repo.find_by_username(username)
 
+        game = game_repo.find_by_player(username)
+        print(game.key.id())
+        print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
+        channel_token = channel.create_channel(username + '::' + str(game.key.id()))
         content = {
             'username': username,
             'message': 'Joined the game',
+            'channel_token': channel_token,
         }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))

@@ -26,4 +26,7 @@ class GameRepository(object):
     def find_by_id(self, id):
         return Game.query(Game.id==id).get()
 
+    def find_by_player(self, username):
+        return Game.query(Game.players==username).get()
+
 game_repo = GameRepository()
