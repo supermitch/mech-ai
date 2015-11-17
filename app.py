@@ -78,6 +78,20 @@ class CreateGameHandler(webapp2.RequestHandler):
 
 
 class PlayGameHandler(BaseHandler):
+    def get(self):
+
+        username = 'mitch'
+
+        game = game_repo.find_by_player(username)
+        print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
+        channel_token = channel.create_channel(username + '::' + str(game.key.id()))
+        context = {
+            'username': username,
+            'message': 'Joined the game',
+            'channel_token': channel_token,
+        }
+        self.render_template('client.html', **context)
+
     def post(self):
         json_object = json.loads(self.request.body)
 
@@ -114,7 +128,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     webapp2.Route('/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
-    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
+    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['GET']),
     webapp2.Route('/_ah/channel/connected/', handler=PlayerConnectHandler),
     webapp2.Route('/_ah/channel/disconnected/', handler=PlayerDisconnectHandler),
 ], debug=True)
