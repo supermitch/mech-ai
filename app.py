@@ -76,6 +76,7 @@ class CreateGameHandler(webapp2.RequestHandler):
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
+
 class PlayGameHandler(BaseHandler):
     def post(self):
         json_object = json.loads(self.request.body)
@@ -101,9 +102,20 @@ class PlayGameHandler(BaseHandler):
         self.response.write(json.dumps(content))
 
 
+class PlayerConnectHandler(BaseHandler):
+    pass
+
+
+class PlayerDisconnectHandler(BaseHandler):
+    pass
+
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     webapp2.Route('/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
     webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
+    webapp2.Route('/_ah/channel/connected/', handler=PlayerConnectHandler),
+    webapp2.Route('/_ah/channel/disconnected/', handler=PlayerDisconnectHandler),
 ], debug=True)
+
