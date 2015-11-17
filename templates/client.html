@@ -2,31 +2,18 @@
   <head>
       <script src='/_ah/channel/jsapi'></script>
       <style type='text/css'>
-        body {
-          font-family: 'Helvetica';
-        }
+        body { font-family: 'Helvetica'; }
 
-        #board {
-          width:152px; 
-          height: 152px;
-          margin: 20px auto;
-        }
-        
-        #display-area {
-          text-align: center;
-        }
-        
-        #this-game {
-          font-size: 9pt;
-        }
-        
-        #winner {
-        }
-        
-        table {
-          border-collapse: collapse;
-        }
-        
+        #board { width:152px; height: 152px; margin: 20px auto; }
+
+        #display-area { text-align: center; }
+
+        #this-game { font-size: 9pt; }
+
+        #winner { }
+
+        table { border-collapse: collapse; }
+
         td {
           width: 50px;
           height: 50px;
@@ -37,7 +24,7 @@
           margin:0px;
           padding: 0px;
         }
-        
+
         div.cell {
           float: left;
           width: 50px;
@@ -46,30 +33,19 @@
           margin: 0px;
           padding: 0px;
         }
-        
-        div.mark {
-          position: absolute;
-          top: 15px;          
-        }
-        
-        div.l {
-          border-right: 1pt solid black;
-        }
-        
-        div.c {
-        }
-        
-        div.r {
-          border-left: 1pt solid black;
-        }
-        
-        div.t {
-          border-bottom: 1pt solid black;
-        }
-        
-        div.m {
-        }
-        
+
+        div.mark { position: absolute; top: 15px; }
+
+        div.l { border-right: 1pt solid black; }
+
+        div.c { }
+
+        div.r { border-left: 1pt solid black; }
+
+        div.t { border-bottom: 1pt solid black; }
+
+        div.m { }
+
         div.b {
           border-top: 1pt solid black;
         }
@@ -98,7 +74,7 @@
             }
           }
         }
-        
+
         var display = {
           'other-player': 'none',
           'your-move': 'none',
@@ -107,7 +83,7 @@
           'you-lost': 'none',
           'board': 'block',
           'this-game': 'block',
-        }; 
+        };
 
         if (!state.userO || state.userO == '') {
           display['other-player'] = 'block';
@@ -122,14 +98,14 @@
         } else {
           display['their-move'] = 'block';
         }
-        
+
         for (var label in display) {
           document.getElementById(label).style.display = display[label];
         }
       };
-      
+
       isMyMove = function() {
-        return (state.winner == "") && 
+        return (state.winner == "") &&
             (state.moveX == (state.userX == state.me));
       }
 
@@ -171,12 +147,12 @@
           document.getElementById(i).style['background'] = color;
         }
       }
-      
+
       onOpened = function() {
-        sendMessage('/opened');
+        sendMessage('/opened');  // Send message to server!
       };
-      
-      onMessage = function(m) {
+
+      onMessage = function(m) {  // Received message from server!
         newState = JSON.parse(m.data);
         state.board = newState.board || state.board;
         state.userX = newState.userX || state.userX;
@@ -186,9 +162,9 @@
         state.winningBoard = newState.winningBoard || "";
         updateGame();
       }
-      
+
       openChannel = function() {
-        var token = '{{ token }}';
+        var token = '{{ channel_token }}';
         var channel = new goog.appengine.Channel(token);
         var handler = {
           'onopen': onOpened,
@@ -200,7 +176,7 @@
         socket.onopen = onOpened;
         socket.onmessage = onMessage;
       }
-      
+
       initialize = function() {
         openChannel();
         var i;
@@ -210,7 +186,7 @@
           square.onclick = new Function('moveInSquare(' + i + ')');
         }
         onMessage({data: '{{ initial_message }}'});
-      }      
+      }
 
       setTimeout(initialize, 100);
 
