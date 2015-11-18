@@ -114,15 +114,17 @@
         return state.userX == state.me ? 'X' : 'O';
       }
 
-      sendMessage = function(path, opt_param) {
+    /** Send a message to the server, via POST method */
+    sendMessage = function(path, opt_param) {
         path += '?g=' + state.game_key;
         if (opt_param) {
-          path += '&' + opt_param;
+            path += '&' + opt_param;
         }
         var xhr = new XMLHttpRequest();
         xhr.open('POST', path, true);
+        console.log('XHR OPEN', xhr);
         xhr.send();
-      };
+    };
 
       moveInSquare = function(id) {
           console.log('Sending message to server');
@@ -146,42 +148,45 @@
           sendMessage('/opened');  // Send message to server!
       };
 
-      onMessage = function(m) {  // Received message from server!
-          console.log('Received message');
-        newState = JSON.parse(m.data);
-        state.board = newState.board || state.board;
-        state.userX = newState.userX || state.userX;
-        state.userO = newState.userO || state.userO;
-        state.moveX = newState.moveX;
-        state.winner = newState.winner || "";
-        state.winningBoard = newState.winningBoard || "";
-        updateGame();
-      }
+onMessage = function(m) {  // Received message from server!
+    console.log('Received message');
+    console.log(m);
+    newState = JSON.parse(m.data);
+    console.log('State: ', newState);
+    state.board = newState.board || state.board;
+    state.userX = newState.userX || state.userX;
+    state.userO = newState.userO || state.userO;
+    state.moveX = newState.moveX;
+    state.winner = newState.winner || "";
+    state.winningBoard = newState.winningBoard || "";
+    updateGame();
+}
 
-      openChannel = function() {
-          console.log('Opening Channel');
-        var token = '{{ channel_token }}';
-        var channel = new goog.appengine.Channel(token);
-        var handler = {
-          'onopen': onOpened,
-          'onmessage': onMessage,
-          'onerror': function() {},
-          'onclose': function() {}
-        };
-        var socket = channel.open(handler);
-        socket.onopen = onOpened;
-        socket.onmessage = onMessage;
-      }
+openChannel = function() {
+    console.log('Opening Channel');
+    var token = '{{ channel_token }}';
+    var channel = new goog.appengine.Channel(token);
+    var handler = {
+        'onopen': onOpened,
+        'onmessage': onMessage,
+        'onerror': function() {},
+        'onclose': function() {}
+    };
+    var socket = channel.open(handler);
+    socket.onopen = onOpened;
+    socket.onmessage = onMessage;
+}
 
-      initialize = function() {
-          console.log('Initializing...');
-        openChannel();
-        var i = 0;
-          var square = document.getElementById(i);
-          square.onmouseover = new Function('highlightSquare(' + i + ')');
-          square.onclick = new Function('moveInSquare(' + i + ')');
-        onMessage({data: '{{ initial_message }}'});
-      }
+initialize = function() {
+    console.log('Initializing...');
+    openChannel();
+    var i = 0;
+    var square = document.getElementById(i);
+    square.onmouseover = new Function('highlightSquare(' + i + ')');
+    square.onmouseout = new Function('highlightSquare(' + i + ')');
+    square.onclick = new Function('moveInSquare(' + i + ')');
+    onMessage({data: '{{ initial_message }}'});
+}
 
       setTimeout(initialize, 100);
 
