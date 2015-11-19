@@ -115,11 +115,13 @@
       }
 
     /** Send a message to the server, via POST method */
-    sendMessage = function(path, opt_param) {
-        path += '?g=' + state.game_key;
-        if (opt_param) {
-            path += '&' + opt_param;
+    sendMessage = function(path) {
+        path += '?g=test';
+        var myData = {
+            access_token = {{ access_token }},
+            move = "attack"
         }
+        JSON.stringify(myData)
         var xhr = new XMLHttpRequest();
         xhr.open('POST', path, true);
         console.log('XHR OPEN', xhr);

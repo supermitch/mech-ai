@@ -117,18 +117,26 @@ class PlayGameHandler(BaseHandler):
 
 
 class PlayerConnectHandler(BaseHandler):
+    print('Player connected')
     pass
 
 
 class PlayerDisconnectHandler(BaseHandler):
+    print('Player disconnected')
     pass
 
+
+def play_game(game_id):
+    for i in range(10):
+        channel_key = 'mitch::' + game_id
+        channel.send_message(channel_key , message)
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     webapp2.Route('/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
     webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['GET']),
+    webapp2.Route('/games/move', handler=PlayGameHandler, name='games_move', methods=['POST']),
     webapp2.Route('/_ah/channel/connected/', handler=PlayerConnectHandler),
     webapp2.Route('/_ah/channel/disconnected/', handler=PlayerDisconnectHandler),
 ], debug=True)
