@@ -8,8 +8,8 @@ host = 'http://mech-ai.appspot.com'
 host = 'http://127.0.0.1:8080'
 
 
-def join_game(game_id):
-    """ Join an existing game. """
+def join_game():
+    """ Get a game ID for an existing game, if you are a listed player. """
     path = '/games/play'
     url = host + path
     headers = {
@@ -23,6 +23,11 @@ def join_game(game_id):
         print('Bad response: {}\n{}'.format(r.status_code, e.message))
         return None
     output = r.json()
+    print('\t' + output['message'])
+    game_id = output['id']
+    if game_id is not None:
+        print('\tGame ID: {}'.format(game_id))
+    return game_id
 
 
 def create_game():
@@ -80,7 +85,8 @@ def register_user(username):
 def main():
     register_user('mitch')
     game_id = create_game()
-    join_game(game_id)
+    game_id = join_game()
+    play_game(game_id)
 
 
 
