@@ -85,12 +85,13 @@ class PlayGameHandler(BaseHandler):
         game = game_repo.find_by_player(username)
         print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
         channel_token = channel.create_channel(username + '::' + str(game.key.id()))
-        context = {
+        content = {
             'username': username,
             'message': 'Joined the game',
             'channel_token': channel_token,
         }
-        self.render_template('client.html', **context)
+        self.response.content_type = 'application/json'
+        self.response.write(json.dumps(content))
 
     def post(self):
         json_object = json.loads(self.request.body)
