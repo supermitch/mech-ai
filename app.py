@@ -41,7 +41,7 @@ class IndexHandler(BaseHandler):
         self.render_template('index.html', name=self.request.get('name'))
 
 
-class RegistrationHandler(webapp2.RequestHandler):
+class RegistrationHandler(BaseHandler):
     def post(self):
         """ Generates and returns an access token for a POSTed username. """
         json_object = json.loads(self.request.body)
@@ -68,7 +68,7 @@ class RegistrationHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(content))
 
 
-class CreateGameHandler(webapp2.RequestHandler):
+class CreateGameHandler(BaseHandler):
     def post(self):
         self.authenticate()  # TODO: @authenticate
 

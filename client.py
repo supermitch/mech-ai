@@ -2,7 +2,7 @@ import json
 import requests
 
 USERNAME = 'mitch'
-ACCESS_TOKEN = '1bxgfcel'
+ACCESS_TOKEN = 'm11hv0lh'
 
 host = 'http://mech-ai.appspot.com'
 host = 'http://127.0.0.1:8080'
@@ -24,7 +24,7 @@ def join_game(game_id=None):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.status_code, e.message))
+        print('Bad response: {}\n{}'.format(r.status_code, e))
         return None
     print(r.url)
     output = r.json()
@@ -52,7 +52,7 @@ def create_game():
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.status_code, e.message))
+        print('Bad response: {}\n{}'.format(r.status_code, e))
         return None
 
     output = r.json()
@@ -67,14 +67,14 @@ def create_game():
 def register_user(username):
     """ Register a new username. """
     print('Attempting to register username: {} ...'.format(username))
-    path = '/register'
+    path = '/users/register'
     url = host + path
     data = {'username': username}
     r = requests.post(url, data=json.dumps(data))
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.status_code, e.message))
+        print('Bad response: {}\n{}'.format(r.status_code, e))
         return None
 
     output = r.json()
