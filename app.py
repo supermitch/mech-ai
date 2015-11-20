@@ -3,7 +3,6 @@ import os
 
 import webapp2
 from webapp2_extras import jinja2
-from google.appengine.api import channel
 
 import tokens
 from models import User, Game, user_repo, game_repo
@@ -95,10 +94,9 @@ class PlayGameHandler(BaseHandler):
 
         game = game_repo.find_by_player(username)
         print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
-        channel_token = channel.create_channel(username + '::' + str(game.key.id()))
         content = {
             'username': username,
-            'message': 'Joined the game',
+            'message': 'Waiting for players',
             'game_id': game.key.id(),
         }
         self.response.content_type = 'application/json'
@@ -117,38 +115,18 @@ class PlayGameHandler(BaseHandler):
         game = game_repo.find_by_player(username)
         print(game.key.id())
         print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
-        channel_token = channel.create_channel(username + '::' + str(game.key.id()))
         content = {
             'username': username,
             'message': 'Joined the game',
-            'channel_token': channel_token,
         }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
 
-class PlayerConnectHandler(BaseHandler):
-    print('Player connected')
-    pass
-
-
-class PlayerDisconnectHandler(BaseHandler):
-    print('Player disconnected')
-    pass
-
-
-def play_game(game_id):
-    for i in range(10):
-        channel_key = 'mitch::' + game_id
-        channel.send_message(channel_key , message)
-
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
-    webapp2.Route('/register', handler=RegistrationHandler, name='registration', methods=['POST']),
+    webapp2.Route('/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
-    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['GET']),
-    webapp2.Route('/games/move', handler=PlayGameHandler, name='games_move', methods=['POST']),
-    webapp2.Route('/_ah/channel/connected/', handler=PlayerConnectHandler),
-    webapp2.Route('/_ah/channel/disconnected/', handler=PlayerDisconnectHandler),
+    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['GET', 'POST']),
 ], debug=True)
 
