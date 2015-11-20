@@ -46,8 +46,7 @@ class RegistrationHandler(webapp2.RequestHandler):
     def post(self):
         """ Generates and returns an access token for a POSTed username. """
         json_object = json.loads(self.request.body)
-        if not 'username' in json_object:
-            webapp2.abort(422, detail='Field [username] is required')
+        self.validate_json_fields(['username'], json_object)
 
         posted_username = json_object['username']
         existing_user = user_repo.find_by_username(posted_username)
@@ -106,13 +105,12 @@ class PlayGameHandler(BaseHandler):
         self.response.write(json.dumps(content))
 
     def post(self):
-        json_object = json.loads(self.request.body)
+        self.authenticate()  # TODO: @authenticate
 
-        required_fields = ['username', 'access_token']
-        self.validate_json_fields(required_fields, json_object)
+        json_object = json.loads(self.request.body)
+        self.validate_json_fields(['username', 'access_token'], json_object)
 
         username = json_object['username']
-        access_token = json_object['access_token']
 
         existing_user = user_repo.find_by_username(username)
 
