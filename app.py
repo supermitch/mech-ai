@@ -10,6 +10,7 @@ from models import User, Game, user_repo, game_repo
 
 
 class BaseHandler(webapp2.RequestHandler):
+
     @webapp2.cached_property
     def jinja2(self):
         return jinja2.get_jinja2(app=self.app)
@@ -18,12 +19,22 @@ class BaseHandler(webapp2.RequestHandler):
         self.response.write(self.jinja2.render_template(filename, **template_args))
 
     def validate_json_fields(self, fields, json_object):
+        """ Return 422 is not all fields are present in a JSON object. """
         messages = []
         for field in fields:
             if field not in json_object:
                 messages.append('Field [{}] is required<br />'.format(field))
         if messages:
             webapp2.abort(422, detail='\n'.join(messages))
+
+    def authenticate(self):
+        """ Return 401 if authorization fails. """
+        username = self.request.headers.get('Username', None)
+        access_token = self.request.headers.get('Access-Token', None)
+
+        db_user = user_repo.find_by_username(username)
+        if not username or not access_token or db_user.access_token != access_token:
+            webapp2.abort(401, 'Authentication failed, please verify Username and Access-Token headers')
 
 
 class IndexHandler(BaseHandler):
@@ -61,6 +72,8 @@ class RegistrationHandler(webapp2.RequestHandler):
 
 class CreateGameHandler(webapp2.RequestHandler):
     def post(self):
+        self.authenticate()  # TODO: @authenticate
+
         json_object = json.loads(self.request.body)
         players = json_object['players']
 
@@ -79,14 +92,7 @@ class CreateGameHandler(webapp2.RequestHandler):
 
 class PlayGameHandler(BaseHandler):
     def get(self):
-
-        print('headers {}'.format(self.request.headers))
-        username = self.request.headers['Username']
-        access_token = self.request.headers['Access-Token']
-
-        existing_user = user_repo.find_by_username(username)
-        if existing_user.access_token != access_token:
-            webapp2.abort(401, 'Authentication failed, please provide Username and Access-Token headers')
+        self.authenticate()  # TODO: @authenticate
 
         game = game_repo.find_by_player(username)
         print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
