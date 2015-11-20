@@ -80,7 +80,13 @@ class CreateGameHandler(webapp2.RequestHandler):
 class PlayGameHandler(BaseHandler):
     def get(self):
 
-        username = 'mitch'
+        print('headers {}'.format(self.request.headers))
+        username = self.request.headers['Username']
+        access_token = self.request.headers['Access-Token']
+
+        existing_user = user_repo.find_by_username(username)
+        if existing_user.access_token != access_token:
+            webapp2.abort(401, 'Authentication failed, please provide Username and Access-Token headers')
 
         game = game_repo.find_by_player(username)
         print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
@@ -88,7 +94,7 @@ class PlayGameHandler(BaseHandler):
         content = {
             'username': username,
             'message': 'Joined the game',
-            'channel_token': channel_token,
+            'game_id': game.key.id(),
         }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
