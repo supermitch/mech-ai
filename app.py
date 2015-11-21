@@ -30,10 +30,12 @@ class BaseHandler(webapp2.RequestHandler):
         """ Return 401 if authorization fails. """
         username = self.request.headers.get('Username', None)
         access_token = self.request.headers.get('Access-Token', None)
-
+        print(username, access_token)
         db_user = user_repo.find_by_username(username)
+        print(db_user)
         if not username or not access_token or db_user.access_token != access_token:
             webapp2.abort(401, 'Authentication failed, please verify Username and Access-Token headers')
+        return username
 
 
 class IndexHandler(BaseHandler):
@@ -51,7 +53,6 @@ class RegistrationHandler(BaseHandler):
         existing_user = user_repo.find_by_username(posted_username)
         if existing_user is None:
             user = user_repo.create(username=posted_username)
-            key = user.put()
             content = {
                 'message': 'Registration succeeded',
                 'username': user.username,
@@ -69,15 +70,14 @@ class RegistrationHandler(BaseHandler):
 
 class CreateGameHandler(BaseHandler):
     def post(self):
-        self.authenticate()  # TODO: @authenticate
+        username = self.authenticate()  # TODO: @authenticate
 
         json_object = json.loads(self.request.body)
         players = json_object['players']
 
-        game = game_repo.create(players=players)
-        key = game.put()
+        game = game_repo.create(players)
         content = {
-            'id': key.id(),
+            'id': game.key.id(),
             'players': game.players,
             'map': 'default',
             'created': game.created.isoformat(),
@@ -88,34 +88,22 @@ class CreateGameHandler(BaseHandler):
 
 
 class PlayGameHandler(BaseHandler):
-    def get(self):
-        self.authenticate()  # TODO: @authenticate
-
-        game = game_repo.find_by_player(username)
-        print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
-        content = {
-            'username': username,
-            'message': 'Waiting for players',
-            'game_id': game.key.id(),
-        }
-        self.response.content_type = 'application/json'
-        self.response.write(json.dumps(content))
-
     def post(self):
-        self.authenticate()  # TODO: @authenticate
+        username = self.authenticate()  # TODO: @authenticate
 
         json_object = json.loads(self.request.body)
-        self.validate_json_fields(['username', 'access_token'], json_object)
+        self.validate_json_fields(['game_id'], json_object)
 
-        username = json_object['username']
+        game_id = json_object['game_id']
 
-        existing_user = user_repo.find_by_username(username)
+        game = game_repo.find_by_id(game_id)
+        print('Game id [{}]'.format(game_id))
+        if not game:
+            webapp2.abort(404, 'Could not find game for game_id [{}]'.format(game_id))
 
-        game = game_repo.find_by_player(username)
-        print(game.key.id())
-        print('GAME ID {} FOR USERNAME {} FOUND'.format(game.key.id(), username))
+        print('Game ID [{}] found'.format(game.key.id()))
         content = {
-            'username': username,
+            'game_id': game.key.id(),
             'message': 'Joined the game',
         }
         self.response.content_type = 'application/json'
@@ -126,6 +114,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     webapp2.Route('/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
-    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['GET', 'POST']),
+    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
 ], debug=True)
 
