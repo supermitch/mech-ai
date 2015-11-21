@@ -62,6 +62,7 @@ def create_game():
 
 def play_game(game_id):
     """ Get a game ID for an existing game, if you are a listed player. """
+    print('Attempting to join game...')
     path = '/games/play'
     url = host + path
     headers = {
@@ -75,19 +76,14 @@ def play_game(game_id):
     except requests.exceptions.HTTPError as e:
         print('Bad response: {}\n{}'.format(r.status_code, e))
         return None
-    print(r.url)
     output = r.json()
     print('\t' + output['message'])
-    game_id = output['id']
-    if game_id is not None:
-        print('\tGame ID: {}'.format(game_id))
-    return game_id
 
 
 def main():
-    # register_user('mitch')
+    register_user('mitch')
     game_id = create_game()
-    # play_game(game_id)
+    play_game(game_id)
 
 
 if __name__ == '__main__':

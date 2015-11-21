@@ -37,9 +37,9 @@ class GameRepo(object):
         game.put()
         return game
 
-    def find_by_id(self, id):
-        return ndb.Key(GameModel, str(id)).get()
-        #return GameModel.get_by_id(id)
+    def find_by_id(self, game_id):
+        #return ndb.Key(GameModel, game_id).get()
+        return GameModel.get_by_id(game_id)
 
     def find_by_player(self, username):
         return GameModel.query(GameModel.players==username).get()
