@@ -5,7 +5,7 @@ import webapp2
 from webapp2_extras import jinja2
 
 import tokens
-from models import User, Game, user_repo, game_repo
+from models import user_repo, game_repo
 
 
 class BaseHandler(webapp2.RequestHandler):
@@ -50,8 +50,7 @@ class RegistrationHandler(webapp2.RequestHandler):
         posted_username = json_object['username']
         existing_user = user_repo.find_by_username(posted_username)
         if existing_user is None:
-            access_token = tokens.generate_unique_token()
-            user = User(username=posted_username, access_token=access_token)
+            user = user_repo.create(username=posted_username)
             key = user.put()
             content = {
                 'message': 'Registration succeeded',
@@ -75,7 +74,7 @@ class CreateGameHandler(webapp2.RequestHandler):
         json_object = json.loads(self.request.body)
         players = json_object['players']
 
-        game = Game(players=players)
+        game = game_repo.create(players=players)
         key = game.put()
         content = {
             'id': key.id(),

@@ -1,32 +1,46 @@
+import tokens
+
 from google.appengine.ext import ndb
 
 
-class User(ndb.Model):
+class UserModel(ndb.Model):
     """ Models a user of the system. """
     username = ndb.StringProperty(required=True)
     access_token = ndb.StringProperty(required=True)
 
-class UserRepository(object):
+class UserRepo(object):
+    def create(self, username):
+        access_token = tokens.generate_unique_token()
+        user = UserModel(username=username, access_token=access_token)
+        return user.put()
+
     def find_by_username(self, username):
-        return User.query(User.username==username).get()
+        return UserModel.query(UserModel.username==username).get()
 
     def find_by_access_token(self, access_token):
-        return User.query(User.access_token==access_token).get()
+        return UserModel.query(UserModel.access_token==access_token).get()
 
-user_repo = UserRepository()
-
-
-class Game(ndb.Model):
+class GameModel(ndb.Model):
     """ Game """
     name = ndb.StringProperty()
     players = ndb.StringProperty(repeated=True)
     created = ndb.DateTimeProperty(auto_now_add=True)
+    status = ndb.StringProperty()
+    map = ndb.StringProperty()
+    state = ndb.JsonProperty()
 
-class GameRepository(object):
+class GameRepo(object):
+    def create(players, map='default'):
+        game = GameModel(players=players, map=map, status='Waiting', state='{}')
+        return game.put()
+
     def find_by_id(self, id):
-        return Game.query(Game.id==id).get()
+        return GameModel.query(GameModel.id==id).get()
 
     def find_by_player(self, username):
-        return Game.query(Game.players==username).get()
+        return GameModel.query(GameModel.players==username).get()
 
-game_repo = GameRepository()
+
+user_repo = UserRepo()
+game_repo = GameRepo()
+
