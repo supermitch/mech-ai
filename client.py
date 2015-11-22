@@ -1,11 +1,6 @@
 import json
 import requests
-
-USERNAME = 'mitch'
-ACCESS_TOKEN = 'ffs76cby'
-
-host = 'http://mech-ai.appspot.com'
-host = 'http://127.0.0.1:8080'
+import config
 
 
 def register_user(username):
