@@ -7,7 +7,7 @@ def register_user(username):
     """ Register a new username. """
     print('Attempting to register username: {} ...'.format(username))
     path = '/users/register'
-    url = host + path
+    url = config.host + path
     data = {'username': username}
     r = requests.post(url, data=json.dumps(data))
     try:
@@ -30,10 +30,10 @@ def create_game():
     """ Create a new game. """
     print('Attempting to create game...')
     path = '/games/create'
-    url = host + path
+    url = config.host + path
     headers = {
-        'username': USERNAME,
-        'access_token': ACCESS_TOKEN
+        'username': config.username,
+        'access_token': config.access_token
     }
     data = json.dumps({
         'players': ['zora', 'chris', 'mitch'],
@@ -59,10 +59,10 @@ def play_game(game_id):
     """ Get a game ID for an existing game, if you are a listed player. """
     print('Attempting to join game...')
     path = '/games/play'
-    url = host + path
+    url = config.host + path
     headers = {
-        'username': USERNAME,
-        'access_token': ACCESS_TOKEN
+        'username': config.username,
+        'access_token': config.access_token
     }
     data = json.dumps({'game_id': game_id})
     r = requests.post(url, headers=headers, data=data)
@@ -76,7 +76,7 @@ def play_game(game_id):
 
 
 def main():
-    register_user('mitch')
+    register_user(config.username)
     game_id = create_game()
     play_game(game_id)
 
