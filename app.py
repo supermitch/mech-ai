@@ -75,12 +75,12 @@ class CreateGameHandler(BaseHandler):
         json_object = json.loads(self.request.body)
         players = json_object['players']
 
-        game = game_repo.create(players)
+        model = game_repo.create(players)
         content = {
-            'id': game.key.id(),
-            'players': game.players,
+            'id': model.key.id(),
+            'players': model.players,
             'map': 'default',
-            'created': game.created.isoformat(),
+            'created': model.created.isoformat(),
             'message': 'Game creation succeeded',
         }
         self.response.content_type = 'application/json'
