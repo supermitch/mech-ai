@@ -74,8 +74,10 @@ class CreateGameHandler(BaseHandler):
 
         json_object = json.loads(self.request.body)
         players = json_object['players']
+        map = json_object.get('map')
 
-        model = game_repo.create(players)
+        game = Game(players, map)
+        model = game_repo.persist(game)
         content = {
             'id': model.key.id(),
             'players': model.players,

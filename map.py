@@ -1,6 +1,6 @@
 import os
 
-def load_map_file(self, name):
+def read_map_file(self, name):
     """ Load map data from disk. """
     root = os.path.dirname(os.path.abspath(__file__))
     map_name = os.path.join(root, 'maps', name, '.txt')
@@ -14,5 +14,4 @@ def load_map_file(self, name):
                 return f.read()
         except IOError:
             print('IOError exception reading map file [{}]'.format(map_name))
-
 

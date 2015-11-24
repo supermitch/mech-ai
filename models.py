@@ -32,7 +32,13 @@ class GameModel(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 class GameRepo(object):
+    """ Abstraction of the GameModel storage in NDB. """
+    def persist(self, game):
+        """ Store a game in the repo. """
+        pass
+
     def create(self, players, map='default'):
+        """ Put a game into the repo. Depracated. """
         game = GameModel(name='Arena', players=players, map=map, status='Waiting', state='{}')
         game.put()
         return game
