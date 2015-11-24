@@ -1,10 +1,11 @@
 import map
 
+
 class Game(object):
     def __init__(self, players, map_name='default'):
         """ Initialize a new game. """
         self.players = players  # List of player usernames
-        self.map = map.load_data(map_name)
+        self.map = map.load_map_file(map_name)
 
     def load_from_state(self):
         """ Load game attributes from raw game state. """
