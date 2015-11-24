@@ -98,16 +98,32 @@ class PlayGameHandler(BaseHandler):
 
         game_id = json_object['game_id']
 
-        game = game_repo.find_by_id(game_id)
+        game_model = game_repo.find_by_id(game_id)
         print('Game id [{}]'.format(game_id))
-        if not game:
+        if not game_model:
             webapp2.abort(404, 'Could not find game for game_id [{}]'.format(game_id))
 
-        print('Game ID [{}] found'.format(game.key.id()))
-        content = {
-            'game_id': game.key.id(),
-            'message': 'Joined the game',
+        print('Game ID [{}] found'.format(game_model.key.id()))
+        message = json_object['message']
+        if message not in ['join', 'myturn?', 'move']:
+            webapp2.abort(422, 'Invalid message type')
+        queue = {
+            'nigel': {'status': 'not joined'},
+            'mitch': {'status': 'not joined'},
         }
+        if message == 'join':
+            queue[username][status] = 'joined'
+        game = Game().load_from_state(game_model.state)
+        # TODO: load queue from state
+        content = {
+            'game_id': game_model.key.id(),
+            'message': 'Joined the game',
+            'status': game.status,
+        }
+        if queue.is_complete():
+            content['message'] = 'started'
+        else:
+            content['message'] = 'waiting'
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
