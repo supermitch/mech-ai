@@ -112,14 +112,17 @@ class PlayGameHandler(BaseHandler):
         message = json_object['message']
         if message not in ['join', 'myturn?', 'move']:
             webapp2.abort(422, 'Invalid message type')
+
+        # TODO: persist & load queue from state
         queue = {
             'nigel': {'status': 'not joined'},
             'mitch': {'status': 'not joined'},
         }
+
         if message == 'join':
             queue[username][status] = 'joined'
-        game = Game().load_from_state(game_model.state)
-        # TODO: load queue from state
+
+        game = Game().load_from_model(game_model)
         content = {
             'game_id': game_model.key.id(),
             'message': 'Joined the game',
