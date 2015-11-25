@@ -14,7 +14,7 @@ class GAME_STATUS(object):
 
 
 class Game(object):
-    def __init__(self, name=name, players=players, map='default'):
+    def __init__(self, name=name, players=players, map_name='default'):
         """ Initialize a new game. """
         self.name = name,
         self.players = players,  # List of player usernames
@@ -22,15 +22,16 @@ class Game(object):
         self.created = datetime.datetime.now(),
 
         # These attributes are persisted in the raw_state, not DB properties
-        self.map = map.read_map_file(map)
+        self.map_name = map_name
+        self.map = map.read_map_file(map_name)
         self.current_turn = 0
         self.max_turns = 0
 
-        self.raw_state = self.serialize(),  # JSON state (a DB property)
+        self.state = self.serialize(),  # JSON state (a DB property)
 
     def load_state_from_json(self):
         """ Load game attributes from raw game state. """
-        state = json.loads(self.raw_state)
+        state = json.loads(self.state)
         self.map = state['map']
         self.current_turn, self.max_turns = state['turn']
 

@@ -73,16 +73,21 @@ class CreateGameHandler(BaseHandler):
         username = self.authenticate()  # TODO: @authenticate
 
         json_object = json.loads(self.request.body)
-        players = json_object['players']
-        map = json_object.get('map')
+        # TODO: Players optional, allows for open game lobby or bots
+        self.validate_json_fields(['players'], json_object)
 
-        game = Game(players, map)
-        model = game_repo.persist(game)
+        players = json_object['players']
+        map = json_object.get('map', 'default')
+
+        game = Game(players=players, map=map)
+        game_model = game_repo.persist(game)
+
         content = {
-            'id': model.key.id(),
-            'players': model.players,
-            'map': 'default',
-            'created': model.created.isoformat(),
+            'id': game_model.key.id(),
+            'name': game_model.name,
+            'players': game_model.players,
+            'map_name': game_model.map,
+            'created': game_model.created.isoformat(),
             'message': 'Game creation succeeded',
         }
         self.response.content_type = 'application/json'
