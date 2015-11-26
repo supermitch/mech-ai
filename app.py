@@ -6,6 +6,7 @@ from webapp2_extras import jinja2
 
 import tokens
 from models import user_repo, game_repo
+from game import Game, GAME_STATUS
 
 
 class BaseHandler(webapp2.RequestHandler):
@@ -119,10 +120,20 @@ class PlayGameHandler(BaseHandler):
             'mitch': {'status': 'not joined'},
         }
 
-        if message == 'join':
-            queue[username][status] = 'joined'
-
         game = Game().load_from_model(game_model)
+
+        if game.status == GAME_STATUS.lobby:
+            if message == 'join':
+                game.queue.set_status(username, 'joined')
+
+        elif game.status == GAME_STATUS.playing:
+            # If it's the player's move
+                # And the player sent a move:
+                    # update the game
+            # If it's not the players move:
+                # Reply "not your turn"
+            pass
+
         content = {
             'game_id': game_model.key.id(),
             'message': 'Joined the game',
