@@ -100,19 +100,18 @@ class PlayGameHandler(BaseHandler):
         username = self.authenticate()  # TODO: @authenticate
 
         json_object = json.loads(self.request.body)
-        self.validate_json_fields(['game_id'], json_object)
+        self.validate_json_fields(['game_id', 'message'], json_object)
 
         game_id = json_object['game_id']
-
         game_model = game_repo.find_by_id(game_id)
-        print('Game id [{}]'.format(game_id))
         if not game_model:
             webapp2.abort(404, 'Could not find game for game_id [{}]'.format(game_id))
+        else:
+            print('Game id [{}] found'.format(game_model.key.id()))
 
-        print('Game ID [{}] found'.format(game_model.key.id()))
         message = json_object['message']
-        if message not in ['join', 'myturn?', 'move']:
-            webapp2.abort(422, 'Invalid message type')
+        if message not in ['join', 'move']:
+            webapp2.abort(422, 'Invalid message type [{}]. Must be "join" or "move".'.format(message))
 
         # TODO: persist & load queue from state
         queue = {
