@@ -13,6 +13,36 @@ class GAME_STATUS(object):
     complete = 'complete'
 
 
+class Queue(object):
+    """ An object essentially describing whose turn it is. """
+    def __init__(self, players):
+        self.current_move = 0
+        self.last_move = None
+        self.statuses = {player: 'waiting' for player in players}
+        self.time_stamps = {player: None for player in players}
+
+    @property
+    def is_complete(self):
+        """ Return True if all players present. """
+        return all(status in ('joined', 'playing') for status in self.statuses.values())
+
+    def set_status(self, player, status):
+        """ Set new status and update time stamp. """
+        self.statuses[player] = status
+        self.time_stamps[player] = datetime.datetime.now()
+
+    @property
+    def json(self):
+        """ Turn game queue into JSON for storage. """
+        data = {
+            'current_move': self.current_move,
+            'last_move': self.last_move,
+            'statuses': self.statuses,
+            'time_stamps': self.time_stamps,
+        }
+        return json.dumps(data)
+
+
 class Game(object):
     def __init__(self, name=name, players=players, map_name='default'):
         """ Initialize a new game. """
@@ -27,7 +57,8 @@ class Game(object):
         self.current_turn = 0
         self.max_turns = 0
 
-        self.state = self.serialize(),  # JSON state (a DB property)
+        self.state = self.serialize_state()
+        self.queue = Queue(players)
 
     def load_state_from_json(self):
         """ Load game attributes from raw game state. """

@@ -29,6 +29,7 @@ class GameModel(ndb.Model):
     status = ndb.StringProperty()
     map_name = ndb.StringProperty()
     state = ndb.JsonProperty()
+    queue = ndb.JsonProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 class GameRepo(object):
@@ -42,6 +43,7 @@ class GameRepo(object):
             map_name=game.map_name,
             status=game.status,
             state=game.state,
+            queue=game.queue,
             created=game.created,
         )
         game.put()
