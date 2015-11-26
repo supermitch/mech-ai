@@ -6,11 +6,16 @@ import map_loader
 
 class GAME_STATUS(object):
     """ Game status constants. """
-    lobby = 'waiting for players'
-    waiting = 'waiting for moves'
-    playing = 'playing'
-    cancelled = 'cancelled'
-    complete = 'complete'
+    lobby = 'lobby'  # In matchmaking lobby, waiting for all players
+    playing = 'playing'  # In game mode, waiting for turns
+    complete = 'complete'  # Game finished
+    cancelled = 'cancelled'  # Broken?
+
+
+class PLAYER_STATUS(object):
+    waiting = 'waiting'  # Hasn't joined the lobby yet
+    playing = 'playing'  # Sending moves and waiting for game state
+    lost = 'lost'  # Missed turns/broken?
 
 
 class Queue(object):
