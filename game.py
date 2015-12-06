@@ -14,6 +14,7 @@ class GAME_STATUS(object):
 
 class PLAYER_STATUS(object):
     waiting = 'waiting'  # Hasn't joined the lobby yet
+    joined = 'joined'  # Has joined the lobby
     playing = 'playing'  # Sending moves and waiting for game state
     lost = 'lost'  # Missed turns/broken?
 
@@ -23,6 +24,7 @@ class Queue(object):
     def __init__(self, players):
         self.current_move = 0
         self.last_move = None
+        self.move_order = [player for player in players]
         self.statuses = {player: 'waiting' for player in players}
         self.time_stamps = {player: None for player in players}
 
@@ -30,6 +32,15 @@ class Queue(object):
     def is_complete(self):
         """ Return True if all players present. """
         return all(status in ('joined', 'playing') for status in self.statuses.values())
+
+    @property
+    def not_joined(self):
+        """ Return a list of players we're waiting on. """
+        return [player for player, status in self.statuses.items() if status == 'waiting']
+
+    def is_turn(self, player):
+        """ Return if it this player's turn or not. """
+        return player == self.move_order[self.current_move]
 
     def set_status(self, player, status):
         """ Set new status and update time stamp. """

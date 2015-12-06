@@ -113,35 +113,30 @@ class PlayGameHandler(BaseHandler):
         if message not in ['join', 'move']:
             webapp2.abort(422, 'Invalid message type [{}]. Must be "join" or "move".'.format(message))
 
-        # TODO: persist & load queue from state
-        queue = {
-            'nigel': {'status': 'not joined'},
-            'mitch': {'status': 'not joined'},
-        }
-
         game = Game().load_from_model(game_model)
 
+        content = {  # Start building response content
+            'game_id': game_model.key.id()
+        }
         if game.status == GAME_STATUS.lobby:
-            if message == 'join':
+            if message == 'join':  # Ignore all other messages
                 game.queue.set_status(username, 'joined')
 
+            if game.queue.is_complete():
+                game.status == GAME_STATUS.playing
+                content['message'] = 'Game started'
+            else:
+                content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
+
         elif game.status == GAME_STATUS.playing:
-            # If it's the player's move
+            if game.queue.is_turn(username):
+                content['message'] = 'Move successful'
                 # And the player sent a move:
                     # update the game
-            # If it's not the players move:
-                # Reply "not your turn"
+            else:
+                content['message'] = 'Not your turn.'
             pass
 
-        content = {
-            'game_id': game_model.key.id(),
-            'message': 'Joined the game',
-            'status': game.status,
-        }
-        if queue.is_complete():
-            content['message'] = 'started'
-        else:
-            content['message'] = 'waiting'
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
