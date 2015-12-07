@@ -60,8 +60,10 @@ class Queue(object):
 
 
 class Game(object):
-    def __init__(self, name=name, players=players, map_name='default'):
+    def __init__(self, players, name=None, map_name='default'):
         """ Initialize a new game. """
+        if name is None:
+            name = 'Game Name'  # TODO: Generate random game name
         self.name = name,
         self.map_name = map_name
         self.players = players,  # List of player usernames
