@@ -33,8 +33,7 @@ class BaseHandler(webapp2.RequestHandler):
         access_token = self.request.headers.get('Access-Token', None)
         print(username, access_token)
         db_user = user_repo.find_by_username(username)
-        print(db_user)
-        if not username or not access_token or db_user.access_token != access_token:
+        if username is None or access_token is None or db_user is None or db_user.access_token != access_token:
             webapp2.abort(401, 'Authentication failed, please verify Username and Access-Token headers')
         return username
 
