@@ -71,7 +71,8 @@ class Game(object):
         self.created = datetime.datetime.now()
 
         # These attributes are persisted in the raw_state, not DB properties
-        self.map = map.read_map_file(map_name)
+        self.map = map_loader.read_map_file(map_name)
+        print(self.map)
         self.current_turn = 0
         self.max_turns = 0
 
