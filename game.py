@@ -64,11 +64,11 @@ class Game(object):
         """ Initialize a new game. """
         if name is None:
             name = 'Game Name'  # TODO: Generate random game name
-        self.name = name,
+        self.name = name
         self.map_name = map_name
-        self.players = players,  # List of player usernames
-        self.status = GAME_STATUS.lobby,
-        self.created = datetime.datetime.now(),
+        self.players = players  # List of player usernames
+        self.status = GAME_STATUS.lobby
+        self.created = datetime.datetime.now()
 
         # These attributes are persisted in the raw_state, not DB properties
         self.map = map.read_map_file(map_name)
