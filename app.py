@@ -86,7 +86,7 @@ class CreateGameHandler(BaseHandler):
             'id': game_model.key.id(),
             'name': game_model.name,
             'players': game_model.players,
-            'map_name': game_model.map,
+            'map_name': game_model.map_name,
             'created': game_model.created.isoformat(),
             'message': 'Game creation succeeded',
         }

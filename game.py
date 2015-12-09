@@ -53,6 +53,7 @@ class Queue(object):
         data = {
             'current_move': self.current_move,
             'last_move': self.last_move,
+            'move_order': self.move_order,
             'statuses': self.statuses,
             'time_stamps': self.time_stamps,
         }
