@@ -20,6 +20,7 @@ The server must be written in Python 2.
 
 1. Run development server: `$ dev_appserver.py helloworld/`
 2. See output at [http://localhost:8080/](http://localhost:8080/)
+3. You can view the dev GAE dashboard at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ### Client
 
