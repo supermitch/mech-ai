@@ -79,7 +79,7 @@ class CreateGameHandler(BaseHandler):
         players = json_object['players']
         map = json_object.get('map', 'default')
 
-        game = Game(players=players, map=map)
+        game = Game(players=players, map_name=map)
         game_model = game_repo.persist(game)
 
         content = {
