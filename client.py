@@ -1,6 +1,17 @@
+import argparse
 import json
 import requests
 import config
+
+
+def setup_args():
+    parser = argparse.ArgumentParser('Mech-AI Client')
+    parser.add_argument('-u', '--username', nargs=1)
+    parser.add_argument('-t', '--token', nargs=1)
+    args = parser.parse_args()
+    args.username = None if args.username is None else args.username[0]
+    args.token = None if args.token is None else args.token[0]
+    return args
 
 
 def register_user(username):
@@ -26,14 +37,14 @@ def register_user(username):
     return access_token
 
 
-def create_game():
+def create_game(username, access_token):
     """ Create a new game. """
     print('Attempting to create game...')
     path = '/games/create'
     url = config.host + path
     headers = {
-        'username': config.username,
-        'access_token': config.access_token
+        'username': username,
+        'access_token': access_token
     }
     data = json.dumps({
         'players': ['zora', 'chris', 'mitch'],
@@ -55,14 +66,14 @@ def create_game():
     return game_id
 
 
-def play_game(game_id):
+def play_game(game_id, username, access_token):
     """ Get a game ID for an existing game, if you are a listed player. """
     print('Attempting to join game...')
     path = '/games/play'
     url = config.host + path
     headers = {
-        'username': config.username,
-        'access_token': config.access_token
+        'username': username,
+        'access_token': access_token
     }
     data = json.dumps({'game_id': game_id})
     r = requests.post(url, headers=headers, data=data)
@@ -76,9 +87,12 @@ def play_game(game_id):
 
 
 def main():
-    register_user(config.username)
-    game_id = create_game()
-    play_game(game_id)
+    args = setup_args()
+    username = args.username if args.username else config.username
+    access_token = args.token if args.token else config.access_token
+    register_user(username)
+    game_id = create_game(username, access_token)
+    play_game(game_id, username, access_token)
 
 
 if __name__ == '__main__':
