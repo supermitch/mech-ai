@@ -68,22 +68,32 @@ def create_game(username, access_token):
 
 def play_game(game_id, username, access_token):
     """ Get a game ID for an existing game, if you are a listed player. """
-    print('Attempting to join game...')
+    print('Attempting to play game...')
     path = '/games/play'
     url = config.host + path
     headers = {
         'username': username,
         'access_token': access_token
     }
-    data = json.dumps({'game_id': game_id})
-    r = requests.post(url, headers=headers, data=data)
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.status_code, e))
-        return None
-    output = r.json()
-    print('\t' + output['message'])
+    while True:
+        data = {
+            'game_id': game_id,
+            'message': 'join',
+        }
+        print('data:\n{}'.format(data))
+        ans = raw_input('Send data? (y/n)')
+        if ans.lower() == 'y':
+            pass
+        else:
+            return
+        r = requests.post(url, headers=headers, data=json.dumps(data))
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print('Bad response: {}\n{}'.format(r.text, e))
+            return None
+        output = r.json()
+        print('\t' + output['message'])
 
 
 def main():
