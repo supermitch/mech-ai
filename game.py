@@ -21,12 +21,20 @@ class PLAYER_STATUS(object):
 
 class Queue(object):
     """ An object essentially describing whose turn it is. """
-    def __init__(self, players):
+    def __init__(self, players=None):
+        """
+        Note that we may init an empty Queue, if we are loading from the repo.
+        """
         self.current_move = 0
         self.last_move = None
-        self.move_order = [player for player in players]
-        self.statuses = {player: 'waiting' for player in players}
-        self.time_stamps = {player: None for player in players}
+        if players is None:
+            self.move_order = []
+            self.statuses = {}
+            self.time_stamps = {}
+        else:
+            self.move_order = [player for player in players]
+            self.statuses = {player: 'waiting' for player in players}
+            self.time_stamps = {player: None for player in players}
 
     @property
     def is_complete(self):
