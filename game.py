@@ -27,6 +27,7 @@ class Queue(object):
         """
         self.current_move = 0
         self.last_move = None
+        print('Players in Queue: {}'.format(players))
         if players is None:
             self.move_order = []
             self.statuses = {}
@@ -67,6 +68,13 @@ class Queue(object):
         }
         return json.dumps(data)
 
+    def load_from_json(self, data):
+        """ Load attributes from JSON storage. """
+        attrs = ['current_move', 'last_move', 'move_order', 'statuses', 'time_stamps']
+        queue_data = json.loads(data)
+        for attr in attrs:
+            setattr(self, attr, queue_data.get(attr))
+
 
 class Game(object):
     def __init__(self, players=None, name=None, map_name='default'):
@@ -89,7 +97,7 @@ class Game(object):
         self.max_turns = 0
 
         self.state = self.serialize_state()
-        self.queue = Queue(players)
+        self.queue = Queue(players=players)
 
     def load_state_from_json(self):
         """ Load game attributes from raw game state. """
@@ -112,6 +120,9 @@ class Game(object):
             setattr(self, attr, getattr(model, attr))
 
         self.load_state_from_json()
+        new_queue = Queue()
+        new_queue.load_from_json(model.queue)
+        self.queue = new_queue
 
     def update(self):
         """ Execute a round. """

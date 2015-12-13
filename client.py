@@ -1,5 +1,6 @@
 import argparse
 import json
+import pprint
 import requests
 import config
 
@@ -37,7 +38,7 @@ def register_user(username):
     return access_token
 
 
-def create_game(username, access_token):
+def create_game(username, access_token, name, players, rounds):
     """ Create a new game. """
     print('Attempting to create game...')
     path = '/games/create'
@@ -47,8 +48,9 @@ def create_game(username, access_token):
         'access_token': access_token
     }
     data = json.dumps({
-        'players': ['zora', 'chris', 'mitch'],
-        'duration': 1000,
+        'name': name,
+        'players': players,
+        'duration': rounds * len(players),
     })
     r = requests.post(url, headers=headers, data=data)
     try:
@@ -93,7 +95,9 @@ def play_game(game_id, username, access_token):
             print('Bad response: {}\n{}'.format(r.text, e))
             return None
         output = r.json()
-        print('\t' + output['message'])
+        print('\tMessage:' + output['message'])
+        print('\tOutput:')
+        pprint.pprint(output, indent=2)
 
 
 def main():
@@ -101,7 +105,7 @@ def main():
     username = args.username if args.username else config.username
     access_token = args.token if args.token else config.access_token
     register_user(username)
-    game_id = create_game(username, access_token)
+    game_id = create_game(username, access_token, name='Test game', players=['mitch', 'nigel'], rounds=20)
     play_game(game_id, username, access_token)
 
 
