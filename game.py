@@ -69,10 +69,13 @@ class Queue(object):
 
 
 class Game(object):
-    def __init__(self, players, name=None, map_name='default'):
-        """ Initialize a new game. """
-        if name is None:
-            name = 'Game Name'  # TODO: Generate random game name
+    def __init__(self, players=None, name=None, map_name='default'):
+        """
+        Initialize a new game.
+
+        Note that when we load a game from the repo, we init an empty
+        game, so all our arguments to the constructor are optional.
+        """
         self.name = name
         self.map_name = map_name
         self.players = players  # List of player usernames
