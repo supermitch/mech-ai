@@ -115,7 +115,9 @@ class PlayGameHandler(BaseHandler):
             logging.info('Invalid message type [{}]. Must be "join" or "move".'.format(message))
             webapp2.abort(422, detail='Invalid message type [{}]. Must be "join" or "move".'.format(message))
 
-        game = Game().load_from_model(game_model)
+        # TODO: Why not have the repo just returned a populated game?
+        game = Game()  # New empty game
+        game.load_from_model(game_model)  # Load from repo
 
         content = {  # Start building response content
             'game_id': game_model.key.id()
@@ -124,7 +126,7 @@ class PlayGameHandler(BaseHandler):
             if message == 'join':  # Ignore all other messages
                 game.queue.set_status(username, 'joined')
 
-            if game.queue.is_complete():
+            if game.queue.is_complete:
                 game.status == GAME_STATUS.playing
                 content['message'] = 'Game started'
             else:
