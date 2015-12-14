@@ -38,9 +38,66 @@ def register_user(username):
     return access_token
 
 
+def prompt_username():
+    """ Prompt user to enter a new username. """
+    while True:
+        ans = raw_input('Enter new username: ')
+        if ans == '':
+            print('Please enter a valid username')
+        else:
+            return ans
+
+
+def prompt_game_id():
+    """ Get input game ID. """
+    while True:
+        ans = raw_input('Enter game ID: ')
+        try:
+            game_id = str(int(ans))  # TODO: Are all game ID's ints?
+            break
+        except:
+            print('Please enter a valid integer game ID')
+    return game_id
+
+
+def prompt_create_game():
+    """ Get inputs required to create a game. """
+    while True:
+        ans = raw_input('Enter name: ')
+        if ans == '':
+            print('Please enter a game name')
+        else:
+            name = ans
+            break
+
+    while True:
+        ans = raw_input('Enter number of rounds: ')
+        if ans == '':
+            rounds = 100
+            break
+        else:
+            try:
+                rounds = int(ans)
+                break
+            except:
+                print('Please enter a valid integer')
+
+    while True:
+        ans = raw_input('Enter list of player usernames: ')
+        if ans == '':
+            print('Please enter a valid list of players')
+        else:
+            players = [x.strip() for x in ans.split()]
+            break
+
+    return name, rounds, players
+
+
 def create_game(username, access_token, name, players, rounds):
     """ Create a new game. """
+
     print('Attempting to create game...')
+
     path = '/games/create'
     url = config.host + path
     headers = {
@@ -104,9 +161,23 @@ def main():
     args = setup_args()
     username = args.username if args.username else config.username
     access_token = args.token if args.token else config.access_token
-    register_user(username)
-    game_id = create_game(username, access_token, name='Test game', players=['mitch', 'nigel'], rounds=20)
-    play_game(game_id, username, access_token)
+    while True:
+        print('Choose an option:')
+        print('\t1. Register new username')
+        print('\t2. Create new game')
+        print('\t3. Join existing game')
+        ans = raw_input('> ')
+        if ans == '1':
+            username = prompt_username()
+            register_user(username)
+        elif ans == '2':
+            name, rounds, players = prompt_create_game()
+            game_id = create_game(username, access_token, name=name, players=players, rounds=rounds)
+        elif ans == '3':
+            game_id = prompt_game_id()
+            play_game(game_id, username, access_token)
+        else:
+            print('Choose a valid option (1-3)')
 
 
 if __name__ == '__main__':
