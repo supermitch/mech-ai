@@ -166,6 +166,7 @@ def main():
         print('\t1. Register new username')
         print('\t2. Create new game')
         print('\t3. Join existing game')
+        print('\t4. Quit')
         ans = raw_input('> ')
         if ans == '1':
             username = prompt_username()
@@ -176,8 +177,11 @@ def main():
         elif ans == '3':
             game_id = prompt_game_id()
             play_game(game_id, username, access_token)
+        elif ans == '4':
+            print('Thanks for playing.')
+            break
         else:
-            print('Choose a valid option (1-3)')
+            print('Choose a valid option (1-4)')
 
 
 if __name__ == '__main__':
