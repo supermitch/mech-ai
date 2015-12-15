@@ -107,13 +107,14 @@ class PlayGameHandler(BaseHandler):
         game_id = json_object['game_id']
         game_model = game_repo.find_by_id(game_id)
         if not game_model:
-            logging.info('Invalid message type [{}]. Must be "join" or "move".'.format(message))
-            webapp2.abort(404, detail='Could not find game for game_id [{}]'.format(game_id))
+            error_message = 'Could not find game for game_id [{}]'.format(game_id)
+            logging.info(error_message)
+            webapp2.abort(404, detail=error_message)
         else:
             print('Game id [{}] found'.format(game_model.key.id()))
 
         message = json_object['message']
-        if message not in ['join', 'move']:
+        if message not in ('join', 'move'):
             logging.info('Invalid message type [{}]. Must be "join" or "move".'.format(message))
             webapp2.abort(422, detail='Invalid message type [{}]. Must be "join" or "move".'.format(message))
 
