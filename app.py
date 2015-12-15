@@ -81,7 +81,6 @@ class CreateGameHandler(BaseHandler):
         map = json_object.get('map', 'default')
 
         # TODO: Add number of rounds arg
-        print('Player: {}'.format(players))
         game = Game(players=players, map_name=map)
         game_model = game_repo.persist(game)
 

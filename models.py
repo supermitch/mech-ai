@@ -51,6 +51,10 @@ class GameRepo(object):
 
     def find_by_id(self, game_id):
         #return ndb.Key(GameModel, game_id).get()
+        try:
+            game_id = int(game_id)
+        except (ValueError, TypeError):
+            return None
         return GameModel.get_by_id(game_id)
 
     def find_by_player(self, username):
