@@ -27,7 +27,6 @@ class Queue(object):
         """
         self.current_move = 0
         self.last_move = None
-        print('Players in Queue: {}'.format(players))
         if players is None:
             self.move_order = []
             self.statuses = {}

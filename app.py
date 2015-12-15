@@ -113,7 +113,7 @@ class PlayGameHandler(BaseHandler):
             print('Game id [{}] found'.format(game_model.key.id()))
 
         message = json_object['message']
-        if message not in ('join', 'move'):
+        if message not in ('status', 'join', 'move'):
             logging.info('Invalid message type [{}]. Must be "join" or "move".'.format(message))
             webapp2.abort(422, detail='Invalid message type [{}]. Must be "join" or "move".'.format(message))
 
@@ -125,22 +125,29 @@ class PlayGameHandler(BaseHandler):
             'game_id': game_model.key.id()
         }
         if game.status == GAME_STATUS.lobby:
+            print('Game in lobby')
             if message == 'join':  # Ignore all other messages
+                print('Received join message')
                 game.queue.set_status(username, 'joined')
                 print('Statuses: {}'.format(game.queue.statuses))
 
             if game.queue.is_complete:
+                print('Game queue is complete')
                 game.status == GAME_STATUS.playing
                 content['message'] = 'Game started'
             else:
+                print('Game gueue is incomplete')
                 content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
 
         elif game.status == GAME_STATUS.playing:
+            print('Game in play')
             if game.queue.is_turn(username):
+                print('It is your turn')
                 content['message'] = 'Move successful'
                 # And the player sent a move:
                     # update the game
             else:
+                print('It is not your turn')
                 content['message'] = 'Not your turn.'
             pass
 

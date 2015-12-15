@@ -125,6 +125,18 @@ def create_game(username, access_token, name, players, rounds):
     return game_id
 
 
+def post_to_game(url, headers, data):
+    """ Post data to our game and get JSON response. """
+    r = requests.post(url, headers=headers, data=json.dumps(data))
+    try:
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        print('Bad response: {}\n{}'.format(r.text, e))
+        return None
+    else:
+        return r.json()
+
+
 def play_game(game_id, username, access_token):
     """ Get a game ID for an existing game, if you are a listed player. """
     print('Attempting to play game...')
@@ -134,27 +146,31 @@ def play_game(game_id, username, access_token):
         'username': username,
         'access_token': access_token
     }
-    while True:
-        data = {
-            'game_id': game_id,
-            'message': 'join',
-        }
-        print('data:\n{}'.format(data))
-        ans = raw_input('Send data? (y/n)')
-        if ans.lower() == 'y':
-            pass
+    data = {'game_id': game_id}
+    while True:  # Loop until game starts
+        data['message'] = 'join'
+        output = post_to_game(url, headers, data)
+        message = output['message']
+        print('\tMessage: ' + message)
+        if message == 'Game started':
+            break
         else:
-            return
-        r = requests.post(url, headers=headers, data=json.dumps(data))
-        try:
-            r.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            print('Bad response: {}\n{}'.format(r.text, e))
-            return None
-        output = r.json()
-        print('\tMessage:' + output['message'])
-        print('\tOutput:')
+            print('\tMessage:' + message)
+            sleep(0.5)
+
+    return
+    while True:  # Play until game ends
+        data['message'] = 'move'
+        print('data:\n{}'.format(data))
+        output = post_to_game(url, headers, data)
         pprint.pprint(output, indent=2)
+        message = output['message']
+        print('\tMessage: ' + message)
+        if message == 'Game ended':
+            break
+        elif message == 'Not your turn':
+            print('\tMessage:' + message)
+            sleep(0.25)
 
 
 def main():
