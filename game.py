@@ -58,14 +58,13 @@ class Queue(object):
     @property
     def json(self):
         """ Turn game queue into JSON for storage. """
-        data = {
+        return json.dumps({
             'current_move': self.current_move,
             'last_move': self.last_move,
             'move_order': self.move_order,
             'statuses': self.statuses,
             'time_stamps': self.time_stamps,
-        }
-        return json.dumps(data)
+        })
 
     def load_from_json(self, data):
         """ Load attributes from JSON storage. """
@@ -119,14 +118,13 @@ class Game(object):
             setattr(self, attr, getattr(model, attr))
 
         self.load_state_from_json()
-        new_queue = Queue()
-        new_queue.load_from_json(model.queue)
-        self.queue = new_queue
+        self.queue = Queue()
+        print('Model.queue {}'.format(model.queue))
+        self.queue.load_from_json(model.queue)
 
     def update(self):
         """ Execute a round. """
         self.current_turn += 1
         if self.current_turn == self.max_turns:
             self.status = GAME_STATUS.complete
-
 

@@ -158,7 +158,6 @@ def play_game(game_id, username, access_token):
             print('\tMessage:' + message)
             sleep(0.5)
 
-    return
     while True:  # Play until game ends
         data['message'] = 'move'
         print('data:\n{}'.format(data))
