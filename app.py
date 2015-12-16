@@ -151,6 +151,7 @@ class PlayGameHandler(BaseHandler):
                 content['message'] = 'Not your turn.'
             pass
 
+        game_repo.persist(game)  # Store state to disk
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
