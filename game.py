@@ -4,6 +4,13 @@ import json
 import map_loader
 
 
+def json_serializer(obj):
+    """JSON serializer for objects not serializable by default json code"""
+    if isinstance(obj, datetime.datetime):
+        return obj.isoformat()
+    raise TypeError ('Type {} not serializable'.format(type(obj)))
+
+
 class GAME_STATUS(object):
     """ Game status constants. """
     lobby = 'lobby'  # In matchmaking lobby, waiting for all players
@@ -64,7 +71,7 @@ class Queue(object):
             'move_order': self.move_order,
             'statuses': self.statuses,
             'time_stamps': self.time_stamps,
-        })
+        }, default=json_serializer)
 
     def load_from_json(self, data):
         """ Load attributes from JSON storage. """
