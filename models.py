@@ -37,6 +37,7 @@ class GameRepo(object):
 
     def persist(self, game):
         """ Store a game in the repo. """
+        print('Persisting: {}'.format(game.queue.json))
         game = GameModel(
             name=game.name,
             players=game.players,
