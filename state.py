@@ -1,19 +1,21 @@
+import json
+
 from utils import json_serializer
 
 
 class State(object):
-    def __init__(self):
+    def __init__(self, map=None, max_turns=23):
         self.map = map
-        self.current_turn
-        self.max_turns
+        self.max_turns = max_turns
+        self.current_turn = 0
 
     @property
     def json(self):
-        """ Turn game state into JSON for storage. """
+        """ Turn object into JSON for storage. """
         return json.dumps({
-            'map': self.current_move,
-            'current_move': self.last_move,
-            'max_turns': self.move_order,
+            'map': self.map,
+            'current_turn': self.current_turn,
+            'max_turns': self.max_turns,
         }, default=json_serializer)
 
     def load_from_json(self, json_data):

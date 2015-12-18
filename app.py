@@ -119,7 +119,9 @@ class PlayGameHandler(BaseHandler):
 
         # TODO: Why not have the repo just returned a populated game?
         game = Game()  # New empty game
+        print('Loading game from model...')
         game.load_from_model(game_model)  # Load from repo
+        print('Game loaded from model...')
 
         content = {  # Start building response content
             'game_id': game_model.key.id()
@@ -151,7 +153,9 @@ class PlayGameHandler(BaseHandler):
                 content['message'] = 'Not your turn.'
             pass
 
+        print('Persisting game...')
         game_repo.persist(game)  # Store state to disk
+        print('Game persisted...')
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 

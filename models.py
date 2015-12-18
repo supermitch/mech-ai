@@ -43,8 +43,8 @@ class GameRepo(object):
             players=game.players,
             map_name=game.map_name,
             status=game.status,
-            state=game.state,
-            queue=game.queue.json,
+            state=game.state.json,  # jsonify object
+            queue=game.queue.json,  # jsonify object
             created=game.created,
         )
         game.put()

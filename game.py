@@ -23,7 +23,7 @@ class PLAYER_STATUS(object):
 
 
 class Game(object):
-    def __init__(self, players=None, name=None, map_name='default'):
+    def __init__(self, players=None, name=None, map_name='default', max_turns=17):
         """
         Initialize a new game.
 
@@ -36,38 +36,27 @@ class Game(object):
         self.status = GAME_STATUS.lobby
         self.created = datetime.datetime.now()
 
-        # These attributes are persisted in the raw_state, not DB properties
-        self.map = map_loader.read_map_file(map_name)
-        print(self.map)
-        self.current_turn = 0
-        self.max_turns = 0
+        # These attributes are persisted in the state, not DB properties
+        map = map_loader.read_map_file(map_name)
+        print(map)
 
-        self.state = self.serialize_state()
+        self.state = state.State(map=map, max_turns=max_turns)
         self.queue = queue.Queue(players=players)
 
-    def load_state_from_json(self):
-        """ Load game attributes from raw game state. """
-        state = json.loads(self.state)
-        self.map = state['map']
-        self.current_turn, self.max_turns = state['turn']
-
-    def serialize_state(self):
-        """ Turn game state into a serialized game state for storage. """
-        state = {
-            'map': self.map,
-            'turn': [self.current_turn, self.max_turns],
-        }
-        return json.dumps(state)
-
     def load_from_model(self, model):
-        """ Populate a Game from an NDB game model. """
-        attrs = ['name', 'players', 'status', 'created', 'map_name', 'state']
+        """ Populate a Game from an NDB game entry. """
+        attrs = ['name', 'players', 'status', 'created', 'map_name']
         for attr in attrs:
             setattr(self, attr, getattr(model, attr))
 
-        self.load_state_from_json()
+        self.state = state.State()
+        self.state.load_from_json(model.state)
+        print('Model.state {}'.format(model.state))
+        print('self.state: {}'.format(self.state))
+
         self.queue = queue.Queue()
         print('Model.queue {}'.format(model.queue))
+        print('self.queue: {}'.format(self.queue))
         self.queue.load_from_json(model.queue)
 
     def update(self):
