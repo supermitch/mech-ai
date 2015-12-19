@@ -104,27 +104,24 @@ class PlayGameHandler(BaseHandler):
         self.validate_json_fields(['game_id', 'message'], json_object)
 
         game_id = json_object['game_id']
-        game_model = game_repo.find_by_id(game_id)
-        if not game_model:
+
+        print('Loading game from model...')
+        game = game_repo.extract_game(game_id)
+        print('Game loaded from model...')
+        if not game:
             error_message = 'Could not find game for game_id [{}]'.format(game_id)
             logging.info(error_message)
             webapp2.abort(404, detail=error_message)
         else:
-            print('Game id [{}] found'.format(game_model.key.id()))
+            print('Game id [{}] found'.format(game_id))
 
         message = json_object['message']
         if message not in ('status', 'join', 'move'):
             logging.info('Invalid message type [{}]. Must be "join" or "move".'.format(message))
             webapp2.abort(422, detail='Invalid message type [{}]. Must be "join" or "move".'.format(message))
 
-        # TODO: Why not have the repo just returned a populated game?
-        game = Game()  # New empty game
-        print('Loading game from model...')
-        game.load_from_model(game_model)  # Load from repo
-        print('Game loaded from model...')
-
         content = {  # Start building response content
-            'game_id': game_model.key.id()
+            'game_id': game_id
         }
         if game.status == GAME_STATUS.lobby:
             print('Game in lobby')
