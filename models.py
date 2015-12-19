@@ -2,9 +2,9 @@ import tokens
 
 from google.appengine.ext import ndb
 
-import game
-import queue
-import state
+from game import Game
+from queue import Queue
+from state import State
 
 
 class UserModel(ndb.Model):
@@ -57,17 +57,17 @@ class GameRepo(object):
     def extract_game(self, game_id):
         """ Populate an return a Game from an NDB game entry. """
         model = self.find_by_id(game_id)
-        game = game.Game()
+        game = Game()
         attrs = ['name', 'players', 'status', 'created', 'map_name']
         for attr in attrs:
             setattr(game, attr, getattr(model, attr))
 
-        game.state = state.State()
+        game.state = State()
         game.state.load_from_json(model.state)
         print('Model.state {}'.format(model.state))
         print('game.state: {}'.format(game.state))
 
-        game.queue = queue.Queue()
+        game.queue = Queue()
         print('Model.queue {}'.format(model.queue))
         print('game.queue: {}'.format(game.queue))
         game.queue.load_from_json(model.queue)
