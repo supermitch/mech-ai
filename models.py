@@ -41,23 +41,32 @@ class GameRepo(object):
 
     def persist(self, game):
         """ Store a game in the repo. """
-        print('Persisting: {}'.format(game.queue.json))
-        game = GameModel(
-            name=game.name,
-            players=game.players,
-            map_name=game.map_name,
-            status=game.status,
-            state=game.state.json,  # jsonify object
-            queue=game.queue.json,  # jsonify object
-            created=game.created,
-        )
-        game.put()
-        return game
+        model = self.find_by_id(game.id)
+        if model:
+            print('Existing game found')
+            model.status=game.status
+            model.state=game.state.json  # jsonify object
+            model.queue=game.queue.json  # jsonify object
+            model.put()
+            return model
+        else:
+            print('No existing game model found')
+            model = GameModel(
+                name=game.name,
+                players=game.players,
+                map_name=game.map_name,
+                status=game.status,
+                state=game.state.json,  # jsonify object
+                queue=game.queue.json,  # jsonify object
+                created=game.created,
+            )
+            model.put()
+            return model
 
     def extract_game(self, game_id):
         """ Populate an return a Game from an NDB game entry. """
         model = self.find_by_id(game_id)
-        game = Game()
+        game = Game(id=game_id)
         attrs = ['name', 'players', 'status', 'created', 'map_name']
         for attr in attrs:
             setattr(game, attr, getattr(model, attr))

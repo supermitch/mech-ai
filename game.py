@@ -23,13 +23,14 @@ class PLAYER_STATUS(object):
 
 
 class Game(object):
-    def __init__(self, players=None, name=None, map_name='default', max_turns=17):
+    def __init__(self, id=None, players=None, name=None, map_name='default', max_turns=17):
         """
         Initialize a new game.
 
         Note that when we load a game from the repo, we init an empty
         game, so all our arguments to the constructor are optional.
         """
+        self.id = id
         self.name = name
         self.map_name = map_name
         self.players = players  # List of player usernames
@@ -43,21 +44,6 @@ class Game(object):
         self.state = state.State(map=map, max_turns=max_turns)
         self.queue = queue.Queue(players=players)
 
-    def load_from_model(self, model):
-        """ Populate a Game from an NDB game entry. """
-        attrs = ['name', 'players', 'status', 'created', 'map_name']
-        for attr in attrs:
-            setattr(self, attr, getattr(model, attr))
-
-        self.state = state.State()
-        self.state.load_from_json(model.state)
-        print('Model.state {}'.format(model.state))
-        print('self.state: {}'.format(self.state))
-
-        self.queue = queue.Queue()
-        print('Model.queue {}'.format(model.queue))
-        print('self.queue: {}'.format(self.queue))
-        self.queue.load_from_json(model.queue)
 
     def update(self):
         """ Execute a round. """
