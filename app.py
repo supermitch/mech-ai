@@ -142,13 +142,21 @@ class PlayGameHandler(BaseHandler):
             print('Game in play')
             if game.queue.is_turn(username):
                 print('It is your turn')
-                content['message'] = 'Move successful'
-                # And the player sent a move:
-                    # update the game
+                if message == 'move':
+                    print('Received move <{}> from player <{}>'.format(content['move'], username))
+                    if game.update(username, content['move']):
+                        content['message'] = 'Move successful'
+                    else:
+                        content['message'] = 'Move rejected'
+                else:
+                    content['message'] = 'Game started'  # Tell them again to make a move
             else:
                 print('It is not your turn')
-                content['message'] = 'Not your turn.'
+                content['message'] = 'Not your turn'
             pass
+        elif game.status == GAME_STATUS.complete:
+            print('Game is complete!')
+            content['message'] = 'Game complete'
 
         print('Persisting game...')
         game_repo.persist(game)  # Store state to disk
