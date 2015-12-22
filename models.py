@@ -41,6 +41,7 @@ class GameRepo(object):
 
     def persist(self, game):
         """ Store a game in the repo. """
+        print('persisting status: {}'.format(game.status))
         model = self.find_by_id(game.id)
         if model:
             print('Existing game found')

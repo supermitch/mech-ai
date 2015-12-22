@@ -21,6 +21,7 @@ class State(object):
     def load_from_json(self, json_data):
         """ Load attributes from JSON storage. """
         data = json.loads(json_data)
+        print('State data loading: {}'.format(data))
         for key, value in data.items():
             setattr(self, key, value)
 
