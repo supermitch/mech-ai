@@ -31,6 +31,10 @@ class Queue(object):
         """ Return a list of players we're waiting on. """
         return [player for player, status in self.statuses.items() if status == 'waiting']
 
+    def increment_move(self):
+        """ Increment the index of the current move. """
+        self.current_move = (self.current_move + 1) % len(self.move_order)
+
     def is_turn(self, player):
         """ Return if it this player's turn or not. """
         return player == self.move_order[self.current_move]
