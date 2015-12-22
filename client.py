@@ -1,6 +1,7 @@
 import argparse
 import json
 import pprint
+import random
 import requests
 import config
 
@@ -160,15 +161,13 @@ def play_game(game_id, username, access_token):
 
     while True:  # Play until game ends
         data['message'] = 'move'
+        data['move'] = random.choice(['Go North', 'Go South', 'Go East', 'Go West'])
         print('data:\n{}'.format(data))
         output = post_to_game(url, headers, data)
         pprint.pprint(output, indent=2)
-        message = output['message']
-        print('\tMessage: ' + message)
-        if message == 'Game ended':
+        if output['message'] == 'Game ended':
             break
-        elif message == 'Not your turn':
-            print('\tMessage:' + message)
+        elif output['message'] == 'Not your turn':
             sleep(0.25)
 
 

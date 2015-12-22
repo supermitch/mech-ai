@@ -143,8 +143,8 @@ class PlayGameHandler(BaseHandler):
             if game.queue.is_turn(username):
                 print('It is your turn')
                 if message == 'move':
-                    print('Received move <{}> from player <{}>'.format(content['move'], username))
-                    if game.update(username, content['move']):
+                    print('Received move <{}> from player <{}>'.format(json_object['move'], username))
+                    if game.update(username, json_object['move']):
                         content['message'] = 'Move successful'
                     else:
                         content['message'] = 'Move rejected'
