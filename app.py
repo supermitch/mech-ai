@@ -132,7 +132,7 @@ class PlayGameHandler(BaseHandler):
 
             if game.queue.is_complete:
                 print('Game queue is complete')
-                game.status == GAME_STATUS.playing
+                game.status = GAME_STATUS.playing
                 content['message'] = 'Game started'
             else:
                 print('Game gueue is incomplete')
