@@ -155,6 +155,9 @@ def play_game(game_id, username, access_token):
         print('\tMessage: ' + message)
         if message == 'Game started':
             break
+        elif message == 'Game complete':
+            print('Game has already ended')
+            return
         else:
             print('\tMessage:' + message)
             sleep(0.5)
@@ -165,7 +168,7 @@ def play_game(game_id, username, access_token):
         print('data:\n{}'.format(data))
         output = post_to_game(url, headers, data)
         pprint.pprint(output, indent=2)
-        if output['message'] == 'Game ended':
+        if output['message'] == 'Game complete':
             break
         elif output['message'] == 'Not your turn':
             sleep(0.25)
