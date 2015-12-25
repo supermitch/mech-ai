@@ -49,12 +49,13 @@ def prompt_username():
             return ans
 
 
-def prompt_game_id():
+def prompt_game_id(username, access_token):
     """ Get input game ID. """
     while True:
-        ans = raw_input('Enter game ID: ')
+        answer = raw_input('Enter game ID: ')
+        game_id = answer if answer else find_game(username, access_token)
         try:
-            game_id = str(int(ans))  # TODO: Are all game ID's ints?
+            game_id = str(int(game_id))  # TODO: Are all game ID's ints?
             break
         except:
             print('Please enter a valid integer game ID')
@@ -111,6 +112,31 @@ def create_game(username, access_token, name, players, rounds):
         'duration': rounds * len(players),
     })
     r = requests.post(url, headers=headers, data=data)
+    try:
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        print('Bad response: {}\n{}'.format(r.status_code, e))
+        return None
+
+    output = r.json()
+    print('\t' + output['message'])
+    game_id, players = output['id'], output['players']
+    if game_id is not None:
+        print('\tGame ID: {}'.format(game_id))
+        print('\tPlayers: {}'.format(', '.join(players)))
+    return game_id
+
+
+def find_game(username, access_token):
+    """ Attempt to locate a game to play, for the given username. """
+    print('Attempting to find a game...')
+    path = '/games/find/'
+    url = config.host + path
+    headers = {
+        'username': username,
+        'access_token': access_token
+    }
+    r = requests.get(url, headers=headers)
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -192,7 +218,7 @@ def main():
             name, rounds, players = prompt_create_game()
             game_id = create_game(username, access_token, name=name, players=players, rounds=rounds)
         elif ans == '3':
-            game_id = prompt_game_id()
+            game_id = prompt_game_id(username, access_token)
             play_game(game_id, username, access_token)
         elif ans == '4':
             print('Thanks for playing.')

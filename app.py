@@ -165,10 +165,30 @@ class PlayGameHandler(BaseHandler):
         self.response.write(json.dumps(content))
 
 
+class FindGameHandler(BaseHandler):
+    def get(self):
+        username = self.authenticate()  # TODO: @authenticate
+
+        game_model = game_repo.find_by_player(username)
+
+        content = {
+            'id': game_model.key.id(),
+            'name': game_model.name,
+            'players': game_model.players,
+            'map_name': game_model.map_name,
+            'created': game_model.created.isoformat(),
+            'message': 'Game found',
+        }
+        print('FOUND GAME')
+        print(content)
+        self.response.content_type = 'application/json'
+        self.response.write(json.dumps(content))
+
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     webapp2.Route('/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
     webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
+    webapp2.Route('/games/find/', handler=FindGameHandler, name='games_find', methods=['GET']),
 ], debug=True)
-

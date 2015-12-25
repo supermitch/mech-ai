@@ -12,6 +12,7 @@ class UserModel(ndb.Model):
     username = ndb.StringProperty(required=True)
     access_token = ndb.StringProperty(required=True)
 
+
 class UserRepo(object):
     def create(self, username):
         access_token = tokens.generate_unique_token()
@@ -35,6 +36,7 @@ class GameModel(ndb.Model):
     state = ndb.JsonProperty()
     queue = ndb.JsonProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
+
 
 class GameRepo(object):
     """ Abstraction of the GameModel storage in NDB. """
