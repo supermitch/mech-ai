@@ -109,7 +109,7 @@ def create_game(username, access_token, name, players, rounds):
     data = json.dumps({
         'name': name,
         'players': players,
-        'duration': rounds * len(players),
+        'rounds': rounds,
     })
     r = requests.post(url, headers=headers, data=data)
     try:
@@ -123,7 +123,9 @@ def create_game(username, access_token, name, players, rounds):
     game_id, players = output['id'], output['players']
     if game_id is not None:
         print('\tGame ID: {}'.format(game_id))
+        print('\tName: {}'.format(name))
         print('\tPlayers: {}'.format(', '.join(players)))
+        print('\tRounds: {}'.format(rounds))
     return game_id
 
 

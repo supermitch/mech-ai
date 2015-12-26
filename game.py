@@ -23,7 +23,7 @@ class PLAYER_STATUS(object):
 
 
 class Game(object):
-    def __init__(self, id=None, players=None, name=None, map_name='default', max_turns=17):
+    def __init__(self, id=None, players=None, name=None, map_name='default', rounds=17):
         """
         Initialize a new game.
 
@@ -41,7 +41,7 @@ class Game(object):
         map = map_loader.read_map_file(map_name)
         print(map)
 
-        self.state = state.State(map=map, max_turns=max_turns)
+        self.state = state.State(map=map, max_turns=rounds)
         self.queue = queue.Queue(players=players)
 
     def update(self, username, move):

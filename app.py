@@ -78,10 +78,12 @@ class CreateGameHandler(BaseHandler):
         self.validate_json_fields(['players'], json_object)
 
         players = json_object['players']
-        map = json_object.get('map', 'default')
+        name = json_object.get('name', None)
+        rounds = json_object.get('rounds', None)
+        map_name = json_object.get('map', 'default')
 
         # TODO: Add number of rounds arg
-        game = Game(players=players, map_name=map)
+        game = Game(players=players, map_name=map_name, name=name, rounds=rounds)
         game_model = game_repo.persist(game)
 
         content = {
