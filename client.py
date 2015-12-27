@@ -3,6 +3,7 @@ import json
 import pprint
 import random
 import requests
+import time
 import config
 
 
@@ -188,7 +189,7 @@ def play_game(game_id, username, access_token):
             return
         else:
             print('\tMessage:' + message)
-            sleep(0.5)
+            time.sleep(0.5)
 
     while True:  # Play until game ends
         data['message'] = 'move'
@@ -199,7 +200,7 @@ def play_game(game_id, username, access_token):
         if output['message'] == 'Game complete':
             break
         elif output['message'] == 'Not your turn':
-            sleep(0.25)
+            time.sleep(0.25)
 
 
 def main():
