@@ -167,40 +167,47 @@ def post_to_game(url, headers, data):
         return r.json()
 
 
+def join_game(url, headers, data):
+    """ Send messages to join the game until the game starts. """
+    print('Attempting to join game...')
+    data['message'] = 'join'
+    while True:
+        output = post_to_game(url, headers, data)
+        message = output['message']
+        print('\tMessage: ' + message)
+        if message == 'Game started' or message == 'Game complete':
+            return
+        else:
+            time.sleep(0.5)
+
+
+def make_moves(url, headers, data):
+    print('Attempting to make moves...')
+    data['message'] = 'move'
+    while True:  # Play until game ends
+        data['move'] = random.choice(['Go North', 'Go South', 'Go East', 'Go West'])
+        print('Posting data:\n{}'.format(data))
+        output = post_to_game(url, headers, data)
+        print('Received response:')
+        pprint.pprint(output, indent=2)
+        if output['message'] == 'Game complete':
+            return
+        elif output['message'] == 'Not your turn':
+            time.sleep(0.25)
+
+
 def play_game(game_id, username, access_token):
     """ Get a game ID for an existing game, if you are a listed player. """
     print('Attempting to play game...')
-    path = '/games/play'
-    url = config.host + path
+    url = config.host + '/games/play'
     headers = {
         'username': username,
         'access_token': access_token
     }
     data = {'game_id': game_id}
-    while True:  # Loop until game starts
-        data['message'] = 'join'
-        output = post_to_game(url, headers, data)
-        message = output['message']
-        print('\tMessage: ' + message)
-        if message == 'Game started':
-            break
-        elif message == 'Game complete':
-            print('Game has already ended')
-            return
-        else:
-            print('\tMessage:' + message)
-            time.sleep(0.5)
 
-    while True:  # Play until game ends
-        data['message'] = 'move'
-        data['move'] = random.choice(['Go North', 'Go South', 'Go East', 'Go West'])
-        print('data:\n{}'.format(data))
-        output = post_to_game(url, headers, data)
-        pprint.pprint(output, indent=2)
-        if output['message'] == 'Game complete':
-            break
-        elif output['message'] == 'Not your turn':
-            time.sleep(0.25)
+    join_game(url, headers, data)
+    make_moves(url, headers, data)
 
 
 def main():
