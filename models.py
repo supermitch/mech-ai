@@ -94,7 +94,7 @@ class GameRepo(object):
         return GameModel.get_by_id(game_id)
 
     def find_by_player(self, username):
-        return GameModel.query(GameModel.players==username).get()
+        return GameModel.query(GameModel.players==username, GameModel.status=='lobby').get()
 
 
 user_repo = UserRepo()
