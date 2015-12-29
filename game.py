@@ -46,8 +46,10 @@ class Game(object):
 
     def update(self, username, move):
         """ Execute a round. """
+        print('Updating move: {}'.format(move))
         self.queue.increment_move()
         self.state.current_turn += 1
         if self.state.current_turn == self.state.max_turns:
             self.status = GAME_STATUS.complete
+        return True
 
