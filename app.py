@@ -192,5 +192,5 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
     webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
-    webapp2.Route('/games/find/', handler=FindGameHandler, name='games_find', methods=['GET']),
+    webapp2.Route('/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
 ], debug=True)

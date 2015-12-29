@@ -133,7 +133,7 @@ def create_game(username, access_token, name, players, rounds):
 def find_game(username, access_token):
     """ Attempt to locate a game to play, for the given username. """
     print('Attempting to find a game...')
-    path = '/games/find/'
+    path = '/games/find'
     url = config.host + path
     headers = {
         'username': username,
