@@ -180,15 +180,18 @@ def join_game(url, headers, data):
         output = post_to_game(url, headers, data)
         message = output['message']
         print('\tMessage: ' + message)
-        if message == 'Game started' or message == 'Game complete':
-            return
+        if message == 'Game started':
+            return output['state']
+        elif message == 'Game complete':
+            return None
         else:
             time.sleep(0.5)
 
 
-def make_moves(url, headers, data):
+def make_moves(url, headers, data, start_state):
     print('Attempting to make moves...')
     data['message'] = 'move'
+    state = start_state
     while True:  # Play until game ends
         data['move'] = ai.make_move(state)
         print('Posting data:\n{}'.format(data))
@@ -198,7 +201,10 @@ def make_moves(url, headers, data):
         if output['message'] == 'Game complete':
             return
         elif output['message'] == 'Not your turn':
+            # TODO: Query state again after opponents moves
             time.sleep(0.25)
+        else:
+            state = output['state']
 
 
 def play_game(game_id, username, access_token):
@@ -211,8 +217,9 @@ def play_game(game_id, username, access_token):
     }
     data = {'game_id': game_id}
 
-    join_game(url, headers, data)
-    make_moves(url, headers, data)
+    start_state = join_game(url, headers, data)
+    if start_state:
+        make_moves(url, headers, data, start_state)
 
 
 def main():
