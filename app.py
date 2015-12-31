@@ -172,17 +172,22 @@ class FindGameHandler(BaseHandler):
         username = self.authenticate()  # TODO: @authenticate
 
         game_model = game_repo.find_by_player(username)
+        if game_model:
+            print('FOUND GAME')
+            content = {
+                'id': game_model.key.id(),
+                'name': game_model.name,
+                'players': game_model.players,
+                'map_name': game_model.map_name,
+                'created': game_model.created.isoformat(),
+                'message': 'Game found',
+            }
+            print(content)
+        else:
+            error_message = 'Could not find game for username [{}]'.format(username)
+            logging.info(error_message)
+            webapp2.abort(404, detail=error_message)
 
-        content = {
-            'id': game_model.key.id(),
-            'name': game_model.name,
-            'players': game_model.players,
-            'map_name': game_model.map_name,
-            'created': game_model.created.isoformat(),
-            'message': 'Game found',
-        }
-        print('FOUND GAME')
-        print(content)
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
