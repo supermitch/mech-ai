@@ -55,12 +55,14 @@ def prompt_game_id(username, access_token):
     while True:
         answer = raw_input('Enter game ID: ')
         game_id = answer if answer else find_game(username, access_token)
+        if answer == 'q':
+            return None
         try:
             game_id = str(int(game_id))  # TODO: Are all game ID's ints?
-            break
         except:
             print('Please enter a valid integer game ID')
-    return game_id
+        else:
+            return game_id
 
 
 def prompt_create_game():
@@ -229,7 +231,8 @@ def main():
             game_id = create_game(username, access_token, name=name, players=players, rounds=rounds)
         elif ans == '3':
             game_id = prompt_game_id(username, access_token)
-            play_game(game_id, username, access_token)
+            if game_id:
+                play_game(game_id, username, access_token)
         elif ans == '4':
             print('Thanks for playing.')
             break
