@@ -4,7 +4,10 @@ import pprint
 import random
 import requests
 import time
+
+import ai
 import config
+
 
 
 def setup_args():
@@ -187,7 +190,7 @@ def make_moves(url, headers, data):
     print('Attempting to make moves...')
     data['message'] = 'move'
     while True:  # Play until game ends
-        data['move'] = random.choice(['Go North', 'Go South', 'Go East', 'Go West'])
+        data['move'] = ai.make_move(state)
         print('Posting data:\n{}'.format(data))
         output = post_to_game(url, headers, data)
         print('Received response:')
