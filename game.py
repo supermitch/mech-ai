@@ -42,6 +42,9 @@ class Game(object):
         print(map)
 
         self.state = state.State(map=map, max_turns=rounds)
+        if players:
+            self.state.set_start_positions(len(players))
+
         self.queue = queue.Queue(players=players)
 
     def update(self, username, move):
