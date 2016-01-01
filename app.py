@@ -136,6 +136,8 @@ class PlayGameHandler(BaseHandler):
                 print('Game queue is complete')
                 game.status = GAME_STATUS.playing
                 content['message'] = 'Game started'
+                print('Game State: {}'.format(game.state.json))
+                content['state'] = game.state.json
             else:
                 print('Game gueue is incomplete')
                 content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
@@ -155,7 +157,8 @@ class PlayGameHandler(BaseHandler):
             else:
                 print('It is not your turn')
                 content['message'] = 'Not your turn'
-            pass
+            print('Game State: {}'.format(game.state.json))
+            content['state'] = game.state.json
         elif game.status == GAME_STATUS.complete:
             print('Game is complete!')
             content['message'] = 'Game complete'

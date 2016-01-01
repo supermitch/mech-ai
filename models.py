@@ -43,7 +43,6 @@ class GameRepo(object):
 
     def persist(self, game):
         """ Store a game in the repo. """
-        print('persisting status: {}'.format(game.status))
         model = self.find_by_id(game.id)
         if model:
             print('Existing game found')
@@ -76,12 +75,8 @@ class GameRepo(object):
 
         game.state = State()
         game.state.load_from_json(model.state)
-        print('Model.state {}'.format(model.state))
-        print('game.state: {}'.format(game.state))
 
         game.queue = Queue()
-        print('Model.queue {}'.format(model.queue))
-        print('game.queue: {}'.format(game.queue))
         game.queue.load_from_json(model.queue)
         return game
 

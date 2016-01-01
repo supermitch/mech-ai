@@ -15,5 +15,5 @@ Wait = 'Wait'
 
 def make_move(state):
     """ Given a game state, decide on a move. """
-    print(state)
+    print('AI making move for state: {}'.format(state))
     return random.choice([GoNorth, GoSouth, GoEast, GoWest])
