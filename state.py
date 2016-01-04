@@ -2,6 +2,7 @@ import json
 import random
 
 from utils import json_serializer
+from player import Player
 
 
 class State(object):
@@ -9,7 +10,9 @@ class State(object):
         self.map = map
         self.max_turns = max_turns
         self.current_turn = 0
+        # TODO: is positions redundant with players? Remove?
         self.positions = []  # (x, y) tuple for each player
+        self.players = []  # List of Player() objects
 
     @property
     def json(self):
@@ -19,13 +22,24 @@ class State(object):
             'current_turn': self.current_turn,
             'max_turns': self.max_turns,
             'positions': self.positions,
+            'players': self.players.json,
         }, default=json_serializer)
 
     def load_from_json(self, json_data):
         """ Load attributes from JSON storage. """
         data = json.loads(json_data)
         for key, value in data.items():
-            setattr(self, key, value)
+            if key == 'players':
+                # Load objects from their own json representation
+                players = []
+                for entry in value:
+                    player = Player()
+                    player.load_from_json(entry)
+                    players.append(player)
+                setattr(self, 'players', players)
+            else:
+                # Simple load
+                setattr(self, key, value)
 
     def set_start_positions(self, player_count):
         """
