@@ -5,8 +5,8 @@ from utils import json_serializer
 
 class Player(object):
 
-    def __init__(self):
-        self.name = ''
+    def __init__(self, name=None):
+        self.name = name if name else ''
         self.position = (0, 0)
         self.health = 0
         self.score = 0

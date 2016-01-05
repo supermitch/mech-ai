@@ -6,13 +6,18 @@ from player import Player
 
 
 class State(object):
-    def __init__(self, map=None, max_turns=23):
+    def __init__(self, map=None, max_turns=23, players=None):
         self.map = map
         self.max_turns = max_turns
         self.current_turn = 0
         # TODO: is positions redundant with players? Remove?
         self.positions = []  # (x, y) tuple for each player
-        self.players = []  # List of Player() objects
+        if players:
+            self.state.set_start_positions(len(players))
+            self.players = [Player(x) for x in players]
+        else:
+            self.players = []  # List of Player() objects
+
 
     @property
     def json(self):
