@@ -1,3 +1,4 @@
+import logging
 import os
 
 def read_map_file(map_name):
@@ -5,9 +6,8 @@ def read_map_file(map_name):
     root = os.path.dirname(os.path.abspath(__file__))
     map_path = os.path.join(root, 'maps', map_name + '.txt')
 
-    print('Loading map file [{}]'.format(map_name))
     if not os.path.isfile(map_path):
-        print('Map file [{}] does not exist'.format(map_path))
+        logging.error('Map file [{}] does not exist'.format(map_path))
     else:
         try:
             with open(map_path, 'r') as f:
