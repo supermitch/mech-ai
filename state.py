@@ -27,7 +27,7 @@ class State(object):
             'current_turn': self.current_turn,
             'max_turns': self.max_turns,
             'positions': self.positions,
-            'players': self.players.json,
+            'players': [player.json for player in self.players],
         }, default=json_serializer)
 
     def load_from_json(self, json_data):
