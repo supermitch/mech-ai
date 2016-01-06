@@ -39,11 +39,7 @@ class Game(object):
 
         # These attributes are persisted in the state, not DB properties
         map = map_loader.read_map_file(map_name)
-        print(map)
-
-        self.state = state.State(map=map, max_turns=rounds)
-        if players:
-            self.state.set_start_positions(len(players))
+        self.state = state.State(map=map, max_turns=rounds, players=players)
 
         self.queue = queue.Queue(players=players)
 

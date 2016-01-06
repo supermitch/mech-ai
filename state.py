@@ -13,7 +13,7 @@ class State(object):
         # TODO: is positions redundant with players? Remove?
         self.positions = []  # (x, y) tuple for each player
         if players:
-            self.state.set_start_positions(len(players))
+            self.set_start_positions(len(players))
             self.players = [Player(x) for x in players]
         else:
             self.players = []  # List of Player() objects
