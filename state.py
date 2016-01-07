@@ -14,7 +14,7 @@ class State(object):
         self.positions = []  # (x, y) tuple for each player
         if players:
             self.set_start_positions(len(players))
-            self.players = [Player(x) for x in players]
+            self.players = [Player(name) for name in players]
         else:
             self.players = []  # List of Player() objects
 
