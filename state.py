@@ -13,8 +13,8 @@ class State(object):
         # TODO: is positions redundant with players? Remove?
         self.positions = []  # (x, y) tuple for each player
         if players:
-            self.set_start_positions(len(players))
             self.players = [Player(name) for name in players]
+            self.set_start_positions()
         else:
             self.players = []  # List of Player() objects
 
@@ -26,7 +26,6 @@ class State(object):
             'map': self.map,
             'current_turn': self.current_turn,
             'max_turns': self.max_turns,
-            'positions': self.positions,
             'players': [player.json for player in self.players],
         }, default=json_serializer)
 
@@ -46,7 +45,7 @@ class State(object):
                 # Simple load
                 setattr(self, key, value)
 
-    def set_start_positions(self, player_count):
+    def set_start_positions(self):
         """
         Given a map and number of players, set initial player positions.
         """
@@ -56,5 +55,7 @@ class State(object):
             for j, cell in enumerate(row):
                 if cell == '@':
                     possible_positions.append((i, j))
-        self.positions = random.sample(possible_positions, player_count)
+        random.shuffle(possible_positions)
+        for player, coords in zip(self.players, possible_positions):
+            player.position = coords
 
