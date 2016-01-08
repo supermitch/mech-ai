@@ -181,30 +181,49 @@ def join_game(url, headers, data):
         message = output['message']
         print('\tMessage: ' + message)
         if message == 'Game started':
-            return output['state']
+            return True
         elif message == 'Game complete':
-            return None
+            return False
         else:
             time.sleep(0.5)
 
 
-def make_moves(url, headers, data, start_state):
-    print('Attempting to make moves...')
-    data['message'] = 'move'
-    state = start_state
+def await_turn(url, headers, data):
+    """ Request state until it is returned (meaning it is our turn) """
+    print('Awaiting my turn...')
+    data['message'] = 'status'
     while True:  # Play until game ends
-        data['move'] = ai.make_move(state)
-        print('Posting data:\n{}'.format(data))
+        print('Posting status:\n{}'.format(data))
         output = post_to_game(url, headers, data)
         print('Received response:')
         pprint.pprint(output, indent=2)
         if output['message'] == 'Game complete':
             return
         elif output['message'] == 'Not your turn':
-            # TODO: Query state again after opponents moves
             time.sleep(0.25)
-        else:
-            state = output['state']
+        elif output['message'] == 'Your turn':
+            return output['state']
+
+def make_moves(url, headers, data):
+    print('Attempting to make moves...')
+    while True:  # Play until game ends
+        state = await_turn(url, headers, data)  # Poll until we get a state (it's our turn)
+        if state is None:  # Game complete
+            return
+
+        data['message'] = 'move'  # Making a move
+        data['move'] = ai.make_move(state)  # Determine move
+        print('Posting move:\n{}'.format(data))
+        output = post_to_game(url, headers, data)
+        print('Received response:')
+        pprint.pprint(output, indent=2)
+
+        if output['message'] == 'Game complete':
+            return
+        elif output['message'] == 'Move accepted':
+            continue
+        elif output['message'] == 'Move rejected':
+            continue
 
 
 def play_game(game_id, username, access_token):
@@ -217,9 +236,8 @@ def play_game(game_id, username, access_token):
     }
     data = {'game_id': game_id}
 
-    start_state = join_game(url, headers, data)
-    if start_state:
-        make_moves(url, headers, data, start_state)
+    if join_game(url, headers, data):
+        make_moves(url, headers, data)
 
 
 def main():
