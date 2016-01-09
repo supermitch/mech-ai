@@ -32,7 +32,7 @@ class BaseHandler(webapp2.RequestHandler):
         """ Return 401 if authorization fails. """
         username = self.request.headers.get('Username', None)
         access_token = self.request.headers.get('Access-Token', None)
-        print(username, access_token)
+        logging.debug('Authenticating username <{}> token <{}>'.format(username, access_token))
         db_user = user_repo.find_by_username(username)
         if username is None or access_token is None or db_user is None or db_user.access_token != access_token:
             webapp2.abort(401, 'Authentication failed, please verify Username and Access-Token headers')
@@ -98,6 +98,80 @@ class CreateGameHandler(BaseHandler):
         self.response.write(json.dumps(content))
 
 
+def handle_client_message(username, game, message):
+    """ Return response content given a game and a client's message. """
+    logging.debug('Received message <{}>'.format(message))
+    # TODO: Where should this live?
+    content = {}  # Return a dictionary
+    if message == 'join':
+        if game.status == GAME_STATUS.lobby:
+            logging.debug('Game in lobby')
+            game.queue.set_status(username, 'joined')
+            logging.debug('Statuses: {}'.format(game.queue.statuses))
+
+            if game.queue.is_complete:
+                game.status = GAME_STATUS.playing
+                logging.debug('Game queue is complete')
+                content['message'] = 'Game started'
+            else:
+                logging.debug('Game gueue is incomplete')
+                content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
+        elif game.status == GAME_STATUS.playing:
+            logging.debug('Game in progess')
+            content['message'] = 'Game started'  # Stop joining
+        elif game.status == GAME_STATUS.complete:
+            logging.debug('Game is complete!')
+            content['message'] = 'Game complete'
+        else:
+            logging.error('Unknown game status: {}'.format(game.status))
+
+    elif message == 'status':
+        if game.status == GAME_STATUS.lobby:
+            logging.debug('Game gueue is incomplete')
+            content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
+        elif game.status == GAME_STATUS.playing:
+            if game.queue.is_turn(username):
+                logging.debug('It is your turn, {}'.format(username))
+                logging.debug('Game State: {}'.format(game.state.json))
+                content['message'] = 'Your turn'  # Tell them to make a move
+            else:
+                logging.debug('It is not your turn')
+                content['message'] = 'Not your turn'
+            content['state'] = game.state.json  # Return state either way
+        elif game.status == GAME_STATUS.complete:
+            logging.debug('Game is complete!')
+            content['message'] = 'Game complete'
+        else:
+            logging.error('Unknown game status: {}'.format(game.status))
+
+    elif message == 'move':
+        if game.status == GAME_STATUS.lobby:
+            logging.debug('Game gueue is incomplete')
+            content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
+
+        elif game.status == GAME_STATUS.playing:
+            if game.queue.is_turn(username):
+                logging.debug('Received move <{}> from player <{}>'.format(json_object['move'], username))
+                if game.update(username, json_object['move']):
+                    content['message'] = 'Move successful'
+                else:
+                    content['message'] = 'Move rejected'
+            else:
+                logging.debug('It is not your turn')
+                content['message'] = 'Not your turn'
+            content['state'] = game.state.json  # Return state either way
+        elif game.status == GAME_STATUS.complete:
+            logging.debug('Game is complete!')
+            content['message'] = 'Game complete'
+        else:
+            logging.error('Unknown game status: {}'.format(game.status))
+
+    else:
+        content['message'] = 'Unknown message content <{}>'.format(message)
+        logging.error('Unknown message content <{}>'.format(message))
+
+    return content
+
 class PlayGameHandler(BaseHandler):
     def post(self):
         username = self.authenticate()  # TODO: @authenticate
@@ -111,57 +185,21 @@ class PlayGameHandler(BaseHandler):
         game = game_repo.extract_game(game_id)
         print('Game loaded from model...')
         if not game:
-            error_message = 'Could not find game for game_id [{}]'.format(game_id)
+            error_message = 'Could not find game for game_id <{}>'.format(game_id)
             logging.info(error_message)
             webapp2.abort(404, detail=error_message)
         else:
-            print('Game id [{}] found'.format(game_id))
+            print('Game id <{}> found'.format(game_id))
 
         message = json_object['message']
         if message not in ('status', 'join', 'move'):
-            logging.info('Invalid message type [{}]. Must be "join" or "move".'.format(message))
-            webapp2.abort(422, detail='Invalid message type [{}]. Must be "join" or "move".'.format(message))
+            logging.info('Invalid message type <{}>'.format(message))
+            webapp2.abort(422, detail='Invalid message type <{}>'.format(message))
 
         content = {  # Start building response content
             'game_id': game_id
         }
-        if game.status == GAME_STATUS.lobby:
-            print('Game in lobby')
-            if message == 'join':  # Ignore all other messages
-                print('Received join message')
-                game.queue.set_status(username, 'joined')
-                print('Statuses: {}'.format(game.queue.statuses))
-
-            if game.queue.is_complete:
-                print('Game queue is complete')
-                game.status = GAME_STATUS.playing
-                content['message'] = 'Game started'
-                print('Game State: {}'.format(game.state.json))
-                content['state'] = game.state.json
-            else:
-                print('Game gueue is incomplete')
-                content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
-
-        elif game.status == GAME_STATUS.playing:
-            print('Game in play')
-            if game.queue.is_turn(username):
-                print('It is your turn')
-                if message == 'move':
-                    print('Received move <{}> from player <{}>'.format(json_object['move'], username))
-                    if game.update(username, json_object['move']):
-                        content['message'] = 'Move successful'
-                    else:
-                        content['message'] = 'Move rejected'
-                else:
-                    content['message'] = 'Game started'  # Tell them again to make a move
-            else:
-                print('It is not your turn')
-                content['message'] = 'Not your turn'
-            print('Game State: {}'.format(game.state.json))
-            content['state'] = game.state.json
-        elif game.status == GAME_STATUS.complete:
-            print('Game is complete!')
-            content['message'] = 'Game complete'
+        content.update(handle_client_message(username, game, message))
 
         print('Persisting game...')
         game_repo.persist(game)  # Store state to disk
