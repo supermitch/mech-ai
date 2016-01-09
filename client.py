@@ -197,6 +197,7 @@ def await_turn(url, headers, data):
         output = post_to_game(url, headers, data)
         print('Received response:')
         pprint.pprint(output, indent=2)
+
         if output['message'] == 'Game complete':
             return
         elif output['message'] == 'Not your turn':
@@ -217,6 +218,9 @@ def make_moves(url, headers, data):
         output = post_to_game(url, headers, data)
         print('Received response:')
         pprint.pprint(output, indent=2)
+
+        del data['move']  # Erase contents each turn
+        del data['message']
 
         if output['message'] == 'Game complete':
             return
