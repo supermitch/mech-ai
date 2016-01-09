@@ -98,10 +98,11 @@ class CreateGameHandler(BaseHandler):
         self.response.write(json.dumps(content))
 
 
-def handle_client_message(username, game, message):
+def handle_client_message(username, game, json_object):
     """ Return response content given a game and a client's message. """
-    logging.debug('Received message <{}>'.format(message))
     # TODO: Where should this live?
+    message = json_object['message']
+    logging.debug('Received message <{}>'.format(message))
     content = {}  # Return a dictionary
     if message == 'join':
         if game.status == GAME_STATUS.lobby:
@@ -199,7 +200,7 @@ class PlayGameHandler(BaseHandler):
         content = {  # Start building response content
             'game_id': game_id
         }
-        content.update(handle_client_message(username, game, message))
+        content.update(handle_client_message(username, game, json_object))
 
         print('Persisting game...')
         game_repo.persist(game)  # Store state to disk
