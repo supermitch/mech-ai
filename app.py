@@ -52,15 +52,15 @@ class RegistrationHandler(BaseHandler):
         if existing_user is None:
             user = user_repo.create(username=posted_username)
             content = {
-                'message': 'Registration succeeded',
                 'username': user.username,
                 'access_token': user.access_token,
+                'message': 'Registration succeeded',
             }
         else:
             content = {
                 'username': posted_username,
-                'message': 'Registration failed: username already exists',
                 'access_token': None,
+                'message': 'Registration failed: username <{}> already exists'.format(username),
             }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
@@ -175,7 +175,7 @@ def handle_client_message(username, game, json_object):
 
 class PlayGameHandler(BaseHandler):
     def post(self):
-        username = self.authenticate()  # TODO: @authenticate
+        username = self.authenticate()
 
         json_object = json.loads(self.request.body)
         self.validate_json_fields(['game_id', 'message'], json_object)
