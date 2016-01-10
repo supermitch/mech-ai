@@ -82,7 +82,6 @@ class CreateGameHandler(BaseHandler):
         rounds = json_object.get('rounds', None)
         map_name = json_object.get('map', 'default')
 
-        # TODO: Add number of rounds arg
         game = Game(players=players, map_name=map_name, name=name, rounds=rounds)
         game_model = game_repo.persist(game)
 
@@ -173,6 +172,7 @@ def handle_client_message(username, game, json_object):
 
     return content
 
+
 class PlayGameHandler(BaseHandler):
     def post(self):
         username = self.authenticate()  # TODO: @authenticate
@@ -182,15 +182,14 @@ class PlayGameHandler(BaseHandler):
 
         game_id = json_object['game_id']
 
-        print('Loading game from model...')
+        logging.debug('Extracting game from model...')
         game = game_repo.extract_game(game_id)
-        print('Game loaded from model...')
         if not game:
             error_message = 'Could not find game for game_id <{}>'.format(game_id)
-            logging.info(error_message)
+            logging.warn(error_message)
             webapp2.abort(404, detail=error_message)
         else:
-            print('Game id <{}> found'.format(game_id))
+            logging.debug('Game id <{}> found'.format(game_id))
 
         message = json_object['message']
         if message not in ('status', 'join', 'move'):
@@ -202,20 +201,19 @@ class PlayGameHandler(BaseHandler):
         }
         content.update(handle_client_message(username, game, json_object))
 
-        print('Persisting game...')
+        logging.debug('Persisting game...')
         game_repo.persist(game)  # Store state to disk
-        print('Game persisted...')
+
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
 
 class FindGameHandler(BaseHandler):
     def get(self):
-        username = self.authenticate()  # TODO: @authenticate
+        username = self.authenticate()  # TODO: @authenticate decorator
 
         game_model = game_repo.find_by_player(username)
         if game_model:
-            print('FOUND GAME')
             content = {
                 'id': game_model.key.id(),
                 'name': game_model.name,
@@ -224,7 +222,7 @@ class FindGameHandler(BaseHandler):
                 'created': game_model.created.isoformat(),
                 'message': 'Game found',
             }
-            print(content)
+            logging.debug('Found game: {}'.format(content))
         else:
             error_message = 'Could not find game for username [{}]'.format(username)
             logging.info(error_message)
