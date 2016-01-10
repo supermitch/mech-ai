@@ -77,7 +77,7 @@ class CreateGameHandler(BaseHandler):
         players = json_object['players']
         name = json_object.get('name', None)
         rounds = json_object.get('rounds', None)
-        map_name = json_object.get('map', 'default')
+        map_name = json_object.get('map', None)
 
         game = Game(players=players, map_name=map_name, name=name, rounds=rounds)
         game_model = game_repo.persist(game)

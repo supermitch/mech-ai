@@ -23,7 +23,7 @@ class PLAYER_STATUS(object):
 
 
 class Game(object):
-    def __init__(self, id=None, players=None, name=None, map_name='default', rounds=17):
+    def __init__(self, id=None, players=None, name='Mech AI', map_name='default', rounds=17):
         """
         Initialize a new game.
 
