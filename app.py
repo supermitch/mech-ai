@@ -102,7 +102,7 @@ def handle_client_message(username, game, json_object):
     # TODO: Where should this live?
     message = json_object['message']
     logging.debug('Received message <{}>'.format(message))
-    content = {}  # Return a dictionary
+    content = {'game_id': json_object['game_id']}  # Return a dictionary
     if message == 'join':
         if game.status == GAME_STATUS.lobby:
             logging.debug('Game in lobby')
@@ -170,6 +170,9 @@ def handle_client_message(username, game, json_object):
         content['message'] = 'Unknown message content <{}>'.format(message)
         logging.error('Unknown message content <{}>'.format(message))
 
+    logging.debug('Persisting game...')
+    game_repo.persist(game)  # Store state to disk
+
     return content
 
 
@@ -180,9 +183,8 @@ class PlayGameHandler(BaseHandler):
         json_object = json.loads(self.request.body)
         self.validate_json_fields(['game_id', 'message'], json_object)
 
-        game_id = json_object['game_id']
-
         logging.debug('Extracting game from model...')
+        game_id = json_object['game_id']
         game = game_repo.extract_game(game_id)
         if not game:
             error_message = 'Could not find game for game_id <{}>'.format(game_id)
@@ -193,16 +195,10 @@ class PlayGameHandler(BaseHandler):
 
         message = json_object['message']
         if message not in ('status', 'join', 'move'):
-            logging.info('Invalid message type <{}>'.format(message))
+            logging.warn('Invalid message type <{}>'.format(message))
             webapp2.abort(422, detail='Invalid message type <{}>'.format(message))
 
-        content = {  # Start building response content
-            'game_id': game_id
-        }
-        content.update(handle_client_message(username, game, json_object))
-
-        logging.debug('Persisting game...')
-        game_repo.persist(game)  # Store state to disk
+        content = handle_client_message(username, game, json_object)
 
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
