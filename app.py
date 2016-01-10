@@ -20,11 +20,8 @@ class BaseHandler(webapp2.RequestHandler):
         self.response.write(self.jinja2.render_template(filename, **template_args))
 
     def validate_json_fields(self, fields, json_object):
-        """ Return 422 is not all fields are present in a JSON object. """
-        messages = []
-        for field in fields:
-            if field not in json_object:
-                messages.append('Field [{}] is required<br />'.format(field))
+        """ Return 422 if not all fields are present in a JSON object. """
+        messages = ['Field <{}> is required<br />'.format(field) for field in fields if field not in json_object]
         if messages:
             webapp2.abort(422, detail='\n'.join(messages))
 
