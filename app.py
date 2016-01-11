@@ -75,9 +75,9 @@ class CreateGameHandler(BaseHandler):
         self.validate_json_fields(['players'], json_object)
 
         players = json_object['players']
-        name = json_object.get('name', None)
-        rounds = json_object.get('rounds', None)
-        map_name = json_object.get('map', None)
+        name = json_object.get('name', 'Mech AI')
+        rounds = json_object.get('rounds', 17)
+        map_name = json_object.get('map', 'Default')
 
         game = Game(players=players, map_name=map_name, name=name, rounds=rounds)
         game_model = game_repo.persist(game)

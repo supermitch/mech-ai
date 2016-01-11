@@ -6,12 +6,10 @@ from player import Player
 
 
 class State(object):
-    def __init__(self, map=None, max_turns=23, players=None):
+    def __init__(self, map=None, rounds=23, players=None):
         self.map = map
-        self.max_turns = max_turns
+        self.max_turns = rounds
         self.current_turn = 0
-        # TODO: is positions redundant with players? Remove?
-        self.positions = []  # (x, y) tuple for each player
         if players:
             self.players = [Player(name) for name in players]
             self.set_start_positions()

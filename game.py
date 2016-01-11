@@ -31,15 +31,15 @@ class Game(object):
         game, so all our arguments to the constructor are optional.
         """
         self.id = id
-        self.name = name
-        self.map_name = map_name
+        self.name = name if name else 'Mech AI'
+        self.map_name = map_name if map_name else 'default'
         self.players = players  # List of player usernames
         self.status = GAME_STATUS.lobby
         self.created = datetime.datetime.now()
 
         # These attributes are persisted in the state, not DB properties
-        map = map_loader.read_map_file(map_name)
-        self.state = state.State(map=map, max_turns=rounds, players=players)
+        map = map_loader.read_map_file(self.map_name)
+        self.state = state.State(map=map, rounds=rounds, players=players)
 
         self.queue = queue.Queue(players=players)
 
