@@ -46,6 +46,21 @@ class Game(object):
     def update(self, username, move):
         """ Execute a round. """
         print('Updating move: {}'.format(move))
+        move = move.lower()
+        player = self.state.players[username]
+
+        movement = {
+            'go north': (0, 1),
+            'go east': (1, 0),
+            'go south': (0, -1),
+            'go west': (-1, 0),
+        }.get(move, None)
+
+        if movement is not None:
+            # TODO: Check collisions!
+            player.position[0] += movement[0]
+            player.position[1] += movement[1]
+
         self.queue.increment_move()
         self.state.current_turn += 1
         if self.state.current_turn == self.state.max_turns:
