@@ -11,10 +11,10 @@ class State(object):
         self.max_turns = rounds
         self.current_turn = 0
         if players:
-            self.players = [Player(name) for name in players]
+            self.players = {name: Player(name) for name in players}
             self.set_start_positions()
         else:
-            self.players = []  # List of Player() objects
+            self.players = {}  # List of Player() objects
 
 
     @property
@@ -24,7 +24,7 @@ class State(object):
             'map': self.map,
             'current_turn': self.current_turn,
             'max_turns': self.max_turns,
-            'players': [player.json for player in self.players],
+            'players': {player.name: player.json for player in self.players.values()},
         }, default=json_serializer)
 
     def load_from_json(self, json_data):
@@ -33,11 +33,11 @@ class State(object):
         for key, value in data.items():
             if key == 'players':
                 # Load objects from their own json representation
-                players = []
-                for entry in value:
+                players = {}
+                for key, value in value.items():
                     player = Player()
-                    player.load_from_json(entry)
-                    players.append(player)
+                    player.load_from_json(value)
+                    players[key] = player
                 setattr(self, 'players', players)
             else:
                 # Simple load
@@ -54,6 +54,6 @@ class State(object):
                 if cell == '@':
                     possible_positions.append((i, j))
         random.shuffle(possible_positions)
-        for player, coords in zip(self.players, possible_positions):
+        for player, coords in zip(self.players.values(), possible_positions):
             player.position = coords
 
