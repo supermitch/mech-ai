@@ -1,12 +1,10 @@
 import os
 
-host_env = {
+environment = os.getenv('ENV', 'dev')
+host = {
     'prod': 'http://mech-ai.appspot.com',
     'dev': 'http://127.0.0.1:8080',
-}
-
-environment = os.getenv('ENV', 'dev')
-host = host_env.get(environment)
+}[environment]
 
 username = os.getenv('USER')
 access_token = os.getenv('TOKEN')
