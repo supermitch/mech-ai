@@ -14,7 +14,7 @@ libraries:
 
 handlers:
 - url: /.*
-  script: app.app
+  script: server.app
 
 skip_files:
 - ^(.*/)?#.*#$
