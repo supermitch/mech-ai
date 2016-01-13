@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import pprint
 import random
 import requests
@@ -198,7 +199,10 @@ def await_turn(url, headers, data):
         print('Received response:')
         pprint.pprint(output, indent=2)
 
-        if output['message'] == 'Game complete':
+        if output is None:
+            logging.error('Received None output from server')
+            return
+        elif output['message'] == 'Game complete':
             return
         elif output['message'] == 'Not your turn':
             time.sleep(0.25)
@@ -222,7 +226,10 @@ def make_moves(url, headers, data):
         del data['move']  # Erase contents each turn
         del data['message']
 
-        if output['message'] == 'Game complete':
+        if output is None:
+            logging.error('Received None output from server')
+            return
+        elif output['message'] == 'Game complete':
             return
         elif output['message'] == 'Move accepted':
             continue
