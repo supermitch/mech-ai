@@ -23,7 +23,7 @@ def setup_args():
 
 def register_user(username):
     """ Register a new username. """
-    print('Attempting to register username: {} ...'.format(username))
+    logging.debug('Attempting to register username: {} ...'.format(username))
     path = '/users/register'
     url = config.host + path
     data = {'username': username}
@@ -31,15 +31,15 @@ def register_user(username):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.status_code, e))
+        logging.warn('Bad response: {}\n{}'.format(r.status_code, e))
         return None
 
     output = r.json()
-    print('\t' + output['message'])
+    logging.debug('\t' + output['message'])
     username, access_token = output['username'], output['access_token']
     if access_token is not None:
-        print('\tUsername: {}'.format(username))
-        print('\tAccess token: {}'.format(access_token))
+        logging.debug('\tUsername: {}'.format(username))
+        logging.debug('\tAccess token: {}'.format(access_token))
 
     return access_token
 
@@ -105,7 +105,7 @@ def prompt_create_game():
 def create_game(username, access_token, name, players, rounds):
     """ Create a new game. """
 
-    print('Attempting to create game...')
+    logging.debug('Attempting to create game...')
 
     path = '/games/create'
     url = config.host + path
@@ -122,11 +122,11 @@ def create_game(username, access_token, name, players, rounds):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.status_code, e))
+        logging.warn('Bad response: {}\n{}'.format(r.status_code, e))
         return None
 
     output = r.json()
-    print('\t' + output['message'])
+    logging.debug('\t' + output['message'])
     game_id, players = output['id'], output['players']
     if game_id is not None:
         print('\tGame ID: {}'.format(game_id))
@@ -138,7 +138,7 @@ def create_game(username, access_token, name, players, rounds):
 
 def find_game(username, access_token):
     """ Attempt to locate a game to play, for the given username. """
-    print('Attempting to find a game...')
+    logging.debug('Attempting to find a game...')
     path = '/games/find'
     url = config.host + path
     headers = {
@@ -149,11 +149,11 @@ def find_game(username, access_token):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.status_code, e))
+        logging.warn('Bad response: {}\n{}'.format(r.status_code, e))
         return None
 
     output = r.json()
-    print('\t' + output['message'])
+    logging.debug('\t' + output['message'])
     game_id, players = output['id'], output['players']
     if game_id is not None:
         print('\tGame ID: {}'.format(game_id))
@@ -167,7 +167,7 @@ def post_to_game(url, headers, data):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('Bad response: {}\n{}'.format(r.text, e))
+        logging.warn('Bad response: {}\n{}'.format(r.text, e))
         return None
     else:
         return r.json()
@@ -175,12 +175,12 @@ def post_to_game(url, headers, data):
 
 def join_game(url, headers, data):
     """ Send messages to join the game until the game starts. """
-    print('Attempting to join game...')
+    logging.debug('Attempting to join game...')
     data['message'] = 'join'
     while True:
         output = post_to_game(url, headers, data)
         message = output['message']
-        print('\tMessage: ' + message)
+        logging.debug('\tMessage: ' + message)
         if message == 'Game started':
             return True
         elif message == 'Game complete':
@@ -191,12 +191,12 @@ def join_game(url, headers, data):
 
 def await_turn(url, headers, data):
     """ Request state until it is returned (meaning it is our turn) """
-    print('Awaiting my turn...')
+    logging.debug('Awaiting my turn...')
     data['message'] = 'status'
     while True:  # Play until game ends
-        print('Posting status:\n{}'.format(data))
+        logging.debug('Posting status:\n{}'.format(data))
         output = post_to_game(url, headers, data)
-        print('Received response:')
+        logging.debug('Received response:')
         pprint.pprint(output, indent=2)
 
         if output is None:
@@ -210,7 +210,7 @@ def await_turn(url, headers, data):
             return output['state']
 
 def make_moves(url, headers, data):
-    print('Attempting to make moves...')
+    logging.debug('Attempting to make moves...')
     while True:  # Play until game ends
         state = await_turn(url, headers, data)  # Poll until we get a state (it's our turn)
         if state is None:  # Game complete
@@ -218,9 +218,9 @@ def make_moves(url, headers, data):
 
         data['message'] = 'move'  # Making a move
         data['move'] = ai.make_move(state)  # Determine move
-        print('Posting move:\n{}'.format(data))
+        logging.debug('Posting move:\n{}'.format(data))
         output = post_to_game(url, headers, data)
-        print('Received response:')
+        logging.debug('Received response:')
         pprint.pprint(output, indent=2)
 
         del data['move']  # Erase contents each turn
@@ -239,7 +239,7 @@ def make_moves(url, headers, data):
 
 def play_game(game_id, username, access_token):
     """ Get a game ID for an existing game, if you are a listed player. """
-    print('Attempting to play game...')
+    logging.debug('Attempting to play game...')
     url = config.host + '/games/play'
     headers = {
         'username': username,
