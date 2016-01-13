@@ -5,7 +5,7 @@ import map_loader
 import queue
 import state
 import utils
-
+import world
 
 class GAME_STATUS(object):
     """ Game status constants. """
@@ -45,9 +45,13 @@ class Game(object):
 
     def update(self, username, move):
         """ Execute a round. """
+
+        tiles = world.World(self)  # Convert our self (a game object) into a World
+
         print('Updating move: {}'.format(move))
         move = move.lower()
         player = self.state.players[username]
+
 
         movement = {
             'go north': (0, 1),
