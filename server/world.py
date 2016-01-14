@@ -14,10 +14,8 @@ class World(object):
         rows = map.split()
         height = len(rows)
         width = len(rows[0])
-        tiles = [[None for _ in range(height)] for _ in range(width)]
-        print('Tiles:\n{}'.format(tiles))
+        self.tiles = [[None for _ in range(height)] for _ in range(width)]
         for y, row in enumerate(rows):
             for x, char in enumerate(row):
-                tiles[x][y] = Tile(char, x, y)
-        print('Tiles:\n{}'.format(tiles))
+                self.tiles[x][y] = Tile(char, x, y)
 

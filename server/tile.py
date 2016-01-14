@@ -23,3 +23,9 @@ class Tile(object):
         else:
             self.walkable = False
 
+    def __str__(self):
+        return '{} {}'.format(self.kind, self.pos)
+
+    def __repr__(self):
+        return "Tile('{}', {}, {})".format(self.char, self.x, self.y)
+
