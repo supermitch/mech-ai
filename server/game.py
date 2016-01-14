@@ -7,6 +7,7 @@ import state
 import utils
 import world
 
+
 class GAME_STATUS(object):
     """ Game status constants. """
     lobby = 'lobby'  # In matchmaking lobby, waiting for all players
@@ -51,7 +52,6 @@ class Game(object):
         print('Updating move: {}'.format(move))
         move = move.lower()
         player = self.state.players[username]
-
 
         movement = {
             'go north': (0, 1),
