@@ -1,4 +1,5 @@
 from tile import Tile
+from mech import Mech
 
 
 class World(object):
@@ -9,7 +10,7 @@ class World(object):
 
     def generate_tiles(self, state):
         """ Generate a tileset from the game state. """
-        print('Map:\n' + state.map)
+        logging.debug('Generating tiles...')
         map = state.map
         rows = map.split()
         height = len(rows)
@@ -19,3 +20,10 @@ class World(object):
             for x, char in enumerate(row):
                 self.tiles[x][y] = Tile(char, x, y)
 
+    def generate_mechs(self, state):
+        """ Generate enemy mechs from the game state. """
+        self.mechs = []
+        logging.debug('Generating enemy mechs...')
+        for name, player in game.state.players.items():
+            print(name, player)
+            self.mechs.append(Mech(player.name, player.pos, player.health, player.score, player.ammo))
