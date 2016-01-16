@@ -60,7 +60,7 @@ class RegistrationHandler(BaseHandler):
             content = {
                 'username': posted_username,
                 'access_token': None,
-                'message': 'Registration failed: username <{}> already exists'.format(username),
+                'message': 'Registration failed: username <{}> already exists'.format(posted_username),
             }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
