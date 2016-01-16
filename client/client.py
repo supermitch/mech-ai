@@ -69,42 +69,28 @@ def prompt_game_id(username, access_token):
             return game_id
 
 
-def prompt_create_game():
-    """ Get inputs required to create a game. """
-    while True:
-        ans = raw_input('Enter name: ')
-        if ans == '':
-            print('Please enter a game name')
-        else:
-            name = ans
-            break
+def prompt_create_game(username):
+    """ Gather inputs required to create a game. """
+
+    answer = raw_input('Enter game name: ')
+    name = 'Mech AI' if answer == '' else answer
 
     while True:
-        ans = raw_input('Enter number of rounds: ')
-        if ans == '':
-            rounds = 100
+        answer = raw_input('Enter number of rounds: ')
+        try:
+            rounds = 100 if answer == '' else int(answer)
             break
-        else:
-            try:
-                rounds = int(ans)
-                break
-            except:
-                print('Please enter a valid integer')
+        except ValueError:
+            print('Please enter a number')
 
-    while True:
-        ans = raw_input('Enter list of player usernames: ')
-        if ans == '':
-            print('Please enter a valid list of players')
-        else:
-            players = [x.strip() for x in ans.split()]
-            break
+    answer = raw_input('Enter list of player usernames: ')
+    players = [username] if answer == '' else [x.strip() for x in answer.split()]
 
     return name, rounds, players
 
 
 def create_game(username, access_token, name, players, rounds):
     """ Create a new game. """
-
     logging.debug('Attempting to create game...')
 
     path = '/games/create'
@@ -263,10 +249,9 @@ def main():
         print('\t4. Quit')
         ans = raw_input('> ')
         if ans == '1':
-            username = prompt_username()
-            register_user(username)
+            register_user(prompt_username())
         elif ans == '2':
-            name, rounds, players = prompt_create_game()
+            name, rounds, players = prompt_create_game(username)
             game_id = create_game(username, access_token, name=name, players=players, rounds=rounds)
         elif ans == '3':
             game_id = prompt_game_id(username, access_token)
