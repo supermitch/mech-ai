@@ -38,10 +38,11 @@ def register_user(username):
     logging.debug('\t' + output['message'])
     username, access_token = output['username'], output['access_token']
     if access_token is not None:
-        logging.debug('\tUsername: {}'.format(username))
-        logging.debug('\tAccess token: {}'.format(access_token))
+        print('Registration successful!')
+        print('\tUsername: {}'.format(username))
+        print('\tAccess token: {}'.format(access_token))
 
-    return access_token
+    return username, access_token
 
 
 def prompt_username():
@@ -52,6 +53,18 @@ def prompt_username():
             print('Please enter a valid username')
         else:
             return ans
+
+
+def prompt_switch_username(new_user, new_token, old_user, old_token):
+    """ Ask if we want to log in as our new user. """
+    while True:
+        ans = raw_input('Login as new username? (Y/n) ')
+        if ans.lower() in ('', 'y'):
+            return new_user, new_token
+        elif ans.lower() == 'n':
+            return old_user, old_token
+        else:
+            print('Please enter y(es) or n(o)')
 
 
 def prompt_game_id(username, access_token):
@@ -249,7 +262,8 @@ def main():
         print('\t4. Quit')
         ans = raw_input('> ')
         if ans == '1':
-            register_user(prompt_username())
+            new_user, new_token = register_user(prompt_username())
+            username, access_token = prompt_switch_username(new_user, new_token, username, access_token)
         elif ans == '2':
             name, rounds, players = prompt_create_game(username)
             game_id = create_game(username, access_token, name=name, players=players, rounds=rounds)
