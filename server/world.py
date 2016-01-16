@@ -1,5 +1,7 @@
+import logging
+
 from tile import Tile
-from mech import Mech
+from mech import Mech, Enemy, Player
 
 
 class World(object):
@@ -7,6 +9,7 @@ class World(object):
     def __init__(self, game):
         print(game.state)
         self.generate_tiles(game.state)
+        self.generate_mechs(game.state)
 
     def generate_tiles(self, state):
         """ Generate a tileset from the game state. """
@@ -24,6 +27,12 @@ class World(object):
         """ Generate enemy mechs from the game state. """
         self.mechs = []
         logging.debug('Generating enemy mechs...')
-        for name, player in game.state.players.items():
-            print(name, player)
-            self.mechs.append(Mech(player.name, player.pos, player.health, player.score, player.ammo))
+        for name, player in state.players.items():
+            print(name, player, state)
+            is_current_player = False  # TODO: Determine current player from state?
+            if is_current_player:
+                self.player = Player(player.name, player.pos, player.health, player.score, player.ammo)
+            else:
+                self.mechs.append(Enemy(player.name, player.pos, player.health, player.score, player.ammo))
+
+
