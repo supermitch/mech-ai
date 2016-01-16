@@ -1,3 +1,5 @@
+import logging
+
 import tokens
 
 from google.appengine.ext import ndb
@@ -45,14 +47,14 @@ class GameRepo(object):
         """ Store a game in the repo. """
         model = self.find_by_id(game.id)
         if model:
-            print('Existing game found')
+            logging.debug('Persisting: Existing game found for id <{}>'.format(game.id))
             model.status=game.status
             model.state=game.state.json  # jsonify object
             model.queue=game.queue.json  # jsonify object
             model.put()
             return model
         else:
-            print('No existing game model found')
+            logging.debug('Persisting: No prior game found for id <{}>'.format(game.id))
             model = GameModel(
                 name=game.name,
                 players=game.players,

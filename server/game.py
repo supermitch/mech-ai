@@ -47,9 +47,10 @@ class Game(object):
     def update(self, username, move):
         """ Execute a round. """
 
-        tiles = world.World(self)  # Convert our self (a game object) into a World
+        the_world = world.World(self)  # Convert our self (a game object) into a World
 
-        print('Updating move: {}'.format(move))
+        # TODO: world.update(move)
+        logging.debug('Updating move: <{}>'.format(move))
         move = move.lower()
         player = self.state.players[username]
 
