@@ -63,8 +63,8 @@ class Game(object):
 
         if movement is not None:
             # TODO: Check collisions!
-            player.position[0] += movement[0]
-            player.position[1] += movement[1]
+            player.pos[0] += movement[0]
+            player.pos[1] += movement[1]
 
         self.queue.increment_move()
         self.state.current_turn += 1

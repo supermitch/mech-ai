@@ -7,7 +7,7 @@ class Player(object):
 
     def __init__(self, name=None):
         self.name = name if name else ''
-        self.position = (0, 0)
+        self.pos = (0, 0)
         self.health = 0
         self.score = 0
         self.ammo = 0
@@ -17,7 +17,7 @@ class Player(object):
         """ Turn object into JSON for storage. """
         return json.dumps({
             'name': self.name,
-            'position': self.position,
+            'pos': self.pos,
             'health': self.health,
             'score': self.score,
             'ammo': self.ammo,
