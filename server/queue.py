@@ -39,6 +39,11 @@ class Queue(object):
         """ Return if it this player's turn or not. """
         return player == self.move_order[self.current_move]
 
+    @property
+    def current_turn(self):
+        """ Return username of current player. """
+        return self.move_order[self.current_move]
+
     def set_status(self, player, status):
         """ Set new status and update time stamp. """
         self.statuses[player] = status
