@@ -9,7 +9,7 @@ class World(object):
     def __init__(self, game):
         print(game.state)
         self.generate_tiles(game.state)
-        self.generate_mechs(game.state)
+        self.generate_mechs(game)
 
     def generate_tiles(self, state):
         """ Generate a tileset from the game state. """
@@ -23,14 +23,13 @@ class World(object):
             for x, char in enumerate(row):
                 self.tiles[x][y] = Tile(char, x, y)
 
-    def generate_mechs(self, state):
+    def generate_mechs(self, game):
         """ Generate enemy mechs from the game state. """
         self.mechs = []
         logging.debug('Generating enemy mechs...')
-        for name, player in state.players.items():
-            print(name, player, state)
-            is_current_player = False  # TODO: Determine current player from state?
-            if is_current_player:
+        for name, player in game.state.players.items():
+            print(name, player, game.state.json)
+            if game.queue.is_turn(name):
                 self.player = Player(player.name, player.pos, player.health, player.score, player.ammo)
             else:
                 self.mechs.append(Enemy(player.name, player.pos, player.health, player.score, player.ammo))
