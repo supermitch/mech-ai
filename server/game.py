@@ -47,29 +47,13 @@ class Game(object):
 
     def update(self, username, move):
         """ Execute a round. """
-
         the_world = world.World(self)  # Convert our self (a game object) into a World
+        success, reason = the_world.update(move)
 
-        # TODO: world.update(move)
-        logging.debug('Updating move: <{}>'.format(move))
-        move = move.lower()
-        player = self.state.players[username]
-
-        movement = {
-            'go north': (0, 1),
-            'go east': (1, 0),
-            'go south': (0, -1),
-            'go west': (-1, 0),
-        }.get(move, None)
-
-        if movement is not None:
-            # TODO: Check collisions!
-            player.pos[0] += movement[0]
-            player.pos[1] += movement[1]
-
-        self.queue.increment_move()
-        self.state.current_turn += 1
-        if self.state.current_turn == self.state.max_turns:
-            self.status = GAME_STATUS.complete
-        return True
+        if success:
+            self.queue.increment_move()
+            self.state.current_turn += 1
+            if self.state.current_turn == self.state.max_turns:
+                self.status = GAME_STATUS.complete
+        return success, reason
 

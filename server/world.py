@@ -34,4 +34,42 @@ class World(object):
             else:
                 self.mechs.append(Enemy(player.name, player.pos, player.health, player.score, player.ammo))
 
+    def update(self, move):
+        """ Update our world with the new move. """
+        move = move.lower()
+        logging.debug('World updating move: <{}>'.format(move))
 
+        movement = {
+            'go north': (0, 1),
+            'go east': (1, 0),
+            'go south': (0, -1),
+            'go west': (-1, 0),
+        }.get(move, None)
+
+        if movement is None:
+            return False, 'Unknown move <{}>'.format(move)
+
+        if self.check_collisions(movement):
+            self.player.pos[0] += movement[0]
+            self.player.pos[1] += movement[1]
+        else:
+            return False, 'Failed collision check'
+
+        return True, 'Move ok'
+
+    def check_collisions(self, movement):
+        """ Ensure that move is valid. """
+        new_x = self.player.pos[0] + movement[0]
+        new_y = self.player.pos[1] + movement[1]
+
+        try:  # Check unwalkable tile collisions
+            if not self.tiles[new_x][new_y].walkable:
+                return False
+        except IndexError:  # Off the map
+            return False
+
+        for enemy in self.mechs:  # Check enemy mech collisions
+            if enemy.pos == (new_x, new_y):  # Occupied
+                return False
+
+        return True

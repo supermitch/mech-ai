@@ -149,10 +149,11 @@ def handle_client_message(username, game, json_object):
         elif game.status == GAME_STATUS.playing:
             if game.queue.is_turn(username):
                 logging.debug('Received move <{}> from player <{}>'.format(json_object['move'], username))
-                if game.update(username, json_object['move']):
+                success, reason = game.update(username, json_object['move'])
+                if success:
                     content['message'] = 'Move successful'
                 else:
-                    content['message'] = 'Move rejected'
+                    content['message'] = 'Move rejected: {}'.format(reason)
             else:
                 logging.debug('It is not your turn')
                 content['message'] = 'Not your turn'
