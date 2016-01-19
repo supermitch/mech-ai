@@ -62,6 +62,8 @@ class World(object):
         new_x = self.player.pos[0] + movement[0]
         new_y = self.player.pos[1] + movement[1]
 
+        if new_x < 0 or new_y < 0:
+            return False  # Off the map
         try:  # Check unwalkable tile collisions
             if not self.tiles[new_x][new_y].walkable:
                 return False
