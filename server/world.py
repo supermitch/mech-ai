@@ -1,13 +1,14 @@
 import logging
 
-from tile import Tile
 from mech import Mech, Enemy, Player
+from tile import Tile
 
 
 class World(object):
+    """ A world is an Object representing our game state. """
 
     def __init__(self, game):
-        print(game.state)
+        """ Generate our world given our game object. """
         self.generate_tiles(game.state)
         self.generate_mechs(game)
 
@@ -24,15 +25,17 @@ class World(object):
                 self.tiles[x][y] = Tile(char, x, y)
 
     def generate_mechs(self, game):
-        """ Generate enemy mechs from the game state. """
+        """ Generate mechs from the game state. """
         self.mechs = []
         logging.debug('Generating enemy mechs...')
         for name, player in game.state.players.items():
-            print(name, player, game.state.json)
+            logging.debug('Adding player to world: {}, {}, {}'.format(name, player, game.state.json))
             if game.queue.is_turn(name):
-                self.player = Player(player.name, player.pos, player.health, player.score, player.ammo)
+                logging.debug('{} is player'.format(name))
+                self.player = player
             else:
-                self.mechs.append(Enemy(player.name, player.pos, player.health, player.score, player.ammo))
+                logging.debug('{} is mech'.format(name))
+                self.mechs.append(player)
 
     def update(self, move):
         """ Update our world with the new move. """
