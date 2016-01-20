@@ -129,7 +129,6 @@ def handle_client_message(username, game, json_object):
         elif game.status == GAME_STATUS.playing:
             if game.queue.is_turn(username):
                 logging.debug('It is your turn, {}'.format(username))
-                logging.debug('Game State: {}'.format(game.state.json))
                 content['message'] = 'Your turn'  # Tell them to make a move
             else:
                 logging.debug('It is not your turn')
