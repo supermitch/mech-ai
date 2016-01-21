@@ -26,9 +26,7 @@ class World(object):
     def generate_mechs(self, game):
         """ Generate mechs from the game state. """
         self.mechs = []
-        logging.debug('Generating enemy mechs...')
         for name, player in game.state.players.items():
-            logging.debug('Adding player to world: {}, {}, {}'.format(name, player, game.state.json))
             if game.queue.is_turn(name):
                 logging.debug('{} is player'.format(name))
                 self.player = player

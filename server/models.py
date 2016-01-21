@@ -48,9 +48,7 @@ class GameRepo(object):
     def persist(self, game):
         """ Store a game in the repo. """
         model = self.find_by_id(game.id)
-        logging.debug('Persisting transactions <{}>'.format(json.dumps(game.transactions)))
         if model:
-            logging.debug('Persisting existing game id <{}>'.format(game.id))
             model.status=game.status
             model.state=game.state.json  # jsonify object
             model.queue=game.queue.json  # jsonify object
@@ -58,7 +56,6 @@ class GameRepo(object):
             model.put()
             return model
         else:
-            logging.debug('Persisting new game')
             model = GameModel(
                 name=game.name,
                 players=game.players,
@@ -86,7 +83,6 @@ class GameRepo(object):
         game.queue = Queue()
         game.queue.load_from_json(model.queue)
 
-        logging.warn('Model.transactions: {}'.format(model.transactions))
         game.transactions = json.loads(model.transactions)
 
         return game
