@@ -228,16 +228,16 @@ class FindGameHandler(BaseHandler):
 class ListGameHandler(BaseHandler):
     def get(self, username=None):
         logging.debug('Username in ListGameHander {}'.format(username))
-        games = [{
-            'id': game_model.key.id(),
-            'name': game_model.name,
-            'players': game_model.players,
-            'map_name': game_model.map_name,
-            'status': game_model.status,
-            'created': game_model.created.isoformat(),
-        } for game_model in game_repo.find_by_username(username)]
-        content = {'results': games}
-
+        content = {
+            'results': [{
+                'id': game_model.key.id(),
+                'name': game_model.name,
+                'players': game_model.players,
+                'map_name': game_model.map_name,
+                'status': game_model.status,
+                'created': game_model.created.isoformat(),
+            } for game_model in game_repo.find_by_username(username)]
+        }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
