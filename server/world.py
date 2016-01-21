@@ -1,6 +1,5 @@
 import logging
 
-from mech import Mech, Enemy, Player
 from tile import Tile
 
 
