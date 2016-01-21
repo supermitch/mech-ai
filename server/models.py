@@ -1,3 +1,4 @@
+import json
 import logging
 
 import tokens
@@ -37,6 +38,7 @@ class GameModel(ndb.Model):
     map_name = ndb.StringProperty()
     state = ndb.JsonProperty()
     queue = ndb.JsonProperty()
+    transactions = ndb.JsonProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
@@ -46,11 +48,13 @@ class GameRepo(object):
     def persist(self, game):
         """ Store a game in the repo. """
         model = self.find_by_id(game.id)
+        logging.debug('Persisting transactions <{}>'.format(json.dumps(game.transactions)))
         if model:
             logging.debug('Persisting existing game id <{}>'.format(game.id))
             model.status=game.status
             model.state=game.state.json  # jsonify object
             model.queue=game.queue.json  # jsonify object
+            model.transactions=json.dumps(game.transactions)
             model.put()
             return model
         else:
@@ -62,6 +66,7 @@ class GameRepo(object):
                 status=game.status,
                 state=game.state.json,  # jsonify object
                 queue=game.queue.json,  # jsonify object
+                transactions=json.dumps(game.transactions),  # jsonify object
                 created=game.created,
             )
             model.put()
@@ -80,6 +85,10 @@ class GameRepo(object):
 
         game.queue = Queue()
         game.queue.load_from_json(model.queue)
+
+        logging.warn('Model.transactions: {}'.format(model.transactions))
+        game.transactions = json.loads(model.transactions)
+
         return game
 
     def find_by_id(self, game_id):

@@ -44,6 +44,7 @@ class Game(object):
         self.state = state.State(map=map, rounds=rounds, players=players)
 
         self.queue = queue.Queue(players=players)
+        self.transactions = []
 
     def update(self, username, move):
         """ Execute a round. """
@@ -55,5 +56,13 @@ class Game(object):
             self.state.current_turn += 1
             if self.state.current_turn == self.state.max_turns:
                 self.status = GAME_STATUS.complete
+
+        self.transactions.append({
+            'move': move,
+            'message': (success, reason),
+            'state': self.state.json
+        })
+        logging.debug('Game transactions: {}'.format(self.transactions))
+
         return success, reason
 
