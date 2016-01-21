@@ -95,8 +95,15 @@ class GameRepo(object):
             return None
         return GameModel.get_by_id(game_id)
 
-    def find_by_player(self, username):
+    def find_lobby_by_username(self, username):
+        """ Return a single game for this user that is in the lobby. """
         return GameModel.query(GameModel.players==username, GameModel.status=='lobby').get()
+
+    def find_by_username(self, username=None):
+        result = GameModel.query()
+        if username:
+            result = result.filter(GameModel.players==username)
+        return result
 
 
 user_repo = UserRepo()
