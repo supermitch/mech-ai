@@ -227,8 +227,10 @@ class FindGameHandler(BaseHandler):
 
 
 class ListGameHandler(BaseHandler):
-    def get(self, username=None):
-        logging.debug('Username in ListGameHander {}'.format(username))
+    def get(self, username=None, id=None):
+        results = game_repo.find_by_username_and_id(username, id)
+        results = results if results else []
+
         content = {
             'results': [{
                 'id': game_model.key.id(),
@@ -237,7 +239,7 @@ class ListGameHandler(BaseHandler):
                 'map_name': game_model.map_name,
                 'status': game_model.status,
                 'created': game_model.created.isoformat(),
-            } for game_model in game_repo.find_by_username(username)]
+            } for game_model in results]
         }
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
@@ -250,5 +252,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
     webapp2.Route('/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
     RedirectRoute('/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
-    Route('/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET']),
+    RedirectRoute('/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET'], strict_slash=True),
+    webapp2.Route('/games/<id>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
+    webapp2.Route('/games/<username>/<id>', handler=ListGameHandler, name='games_list_user_id', methods=['GET']),
 ], debug=True)

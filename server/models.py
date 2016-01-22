@@ -99,10 +99,15 @@ class GameRepo(object):
         """ Return a single game for this user that is in the lobby. """
         return GameModel.query(GameModel.players==username, GameModel.status=='lobby').get()
 
-    def find_by_username(self, username=None):
+    def find_by_username_and_id(self, username=None, id=None):
         result = GameModel.query()
         if username:
             result = result.filter(GameModel.players==username)
+        if id:
+            result = self.find_by_id(id)  # Should return a list of results
+        if result:
+            if not hasattr(result, '__iter__'):  # Is not a list
+                result = [result]
         return result
 
 
