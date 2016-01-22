@@ -4,6 +4,7 @@ import os
 
 import webapp2
 from webapp2_extras import jinja2
+from webapp2_extras.routes import RedirectRoute
 
 import tokens
 from models import user_repo, game_repo
@@ -248,7 +249,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
     webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
     webapp2.Route('/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
-    webapp2.Route('/games', handler=ListGameHandler, name='games_list', methods=['GET']),
-    webapp2.Route('/games/', handler=ListGameHandler, name='games_list', methods=['GET']),  # TODO: Merge these 3 routes!
-    webapp2.Route('/games/<username>', handler=ListGameHandler, name='games_list', methods=['GET']),
+    RedirectRoute('/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
+    Route('/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET']),
 ], debug=True)
