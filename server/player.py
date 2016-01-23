@@ -11,6 +11,7 @@ class Player(object):
         self.health = 0
         self.score = 0
         self.ammo = 0
+        self.orientation = 'north'
 
     @property
     def json(self):
@@ -21,6 +22,7 @@ class Player(object):
             'health': self.health,
             'score': self.score,
             'ammo': self.ammo,
+            'orientation': self.orientation,
         }, default=json_serializer)
 
     def load_from_json(self, json_data):
@@ -28,3 +30,11 @@ class Player(object):
         data = json.loads(json_data)
         for key, value in data.items():
             setattr(self, key, value)
+
+    def rotate(self, direction):
+        """ Rotates either clockwise or counter clockwise to a new direction. """
+        orientations = ['north', 'east', 'south', 'west']
+        index = orientations.index(self.orientation)
+        index += 1 if direction == 'cw' else -1
+        index = index % len(orienations)
+        self.orientation = orientations[index]

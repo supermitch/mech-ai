@@ -39,6 +39,11 @@ class World(object):
         move = move.lower()
         logging.debug('World updating move: <{}>'.format(move))
 
+        if move in ('rotate cw', 'rotate ccw'):
+            direction = move.split()[1]
+            self.player.rotate(direction)
+            return True, 'Move ok'
+
         movement = {
             'go north': (0, 1),
             'go east': (1, 0),
