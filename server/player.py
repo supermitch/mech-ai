@@ -33,8 +33,8 @@ class Player(object):
 
     def rotate(self, direction):
         """ Rotates either clockwise or counter clockwise to a new direction. """
-        orientations = ['north', 'east', 'south', 'west']
-        index = orientations.index(self.orientation)
+        dirs = ['north', 'east', 'south', 'west']
+        index = dirs.index(self.orientation)
         index += 1 if direction == 'cw' else -1
-        index = index % len(orienations)
-        self.orientation = orientations[index]
+        index = index % len(dirs)
+        self.orientation = dirs[index]
