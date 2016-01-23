@@ -34,10 +34,32 @@ class World(object):
                 logging.debug('{} is mech'.format(name))
                 self.mechs.append(player)
 
+    def check_collisions(self, movement):
+        """ Ensure that move is valid. """
+        new_x = self.player.pos[0] + movement[0]
+        new_y = self.player.pos[1] + movement[1]
+
+        if new_x < 0 or new_y < 0:
+            return False  # Off the map
+        try:  # Check unwalkable tile collisions
+            if not self.tiles[new_x][new_y].walkable:
+                return False
+        except IndexError:  # Off the map
+            return False
+
+        for enemy in self.mechs:  # Check enemy mech collisions
+            if enemy.pos == (new_x, new_y):  # Occupied
+                return False
+
+        return True
+
     def update(self, move):
         """ Update our world with the new move. """
         move = move.lower()
         logging.debug('World updating move: <{}>'.format(move))
+
+        if move in ('wait'):
+            return True, 'Move ok'
 
         if move in ('rotate cw', 'rotate ccw'):
             direction = move.split()[1]
@@ -57,26 +79,7 @@ class World(object):
         if self.check_collisions(movement):
             self.player.pos[0] += movement[0]
             self.player.pos[1] += movement[1]
+            return True, 'Move ok'
         else:
             return False, 'Failed collision check'
 
-        return True, 'Move ok'
-
-    def check_collisions(self, movement):
-        """ Ensure that move is valid. """
-        new_x = self.player.pos[0] + movement[0]
-        new_y = self.player.pos[1] + movement[1]
-
-        if new_x < 0 or new_y < 0:
-            return False  # Off the map
-        try:  # Check unwalkable tile collisions
-            if not self.tiles[new_x][new_y].walkable:
-                return False
-        except IndexError:  # Off the map
-            return False
-
-        for enemy in self.mechs:  # Check enemy mech collisions
-            if enemy.pos == (new_x, new_y):  # Occupied
-                return False
-
-        return True
