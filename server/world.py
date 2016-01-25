@@ -34,17 +34,22 @@ class World(object):
                 logging.debug('{} is mech'.format(name))
                 self.mechs.append(player)
 
+    def is_valid_coord(self, x, y):
+        """ Check if a coordinate is within map bounds. """
+        if x < 0 or y < 0 or y > len(self.tiles) or x > len(self.tiles[0]):
+            return False
+        else:
+            return True
+
     def check_collisions(self, movement):
         """ Ensure that move is valid. """
         new_x = self.player.pos[0] + movement[0]
         new_y = self.player.pos[1] + movement[1]
 
-        if new_x < 0 or new_y < 0:
-            return False  # Off the map
-        try:  # Check unwalkable tile collisions
-            if not self.tiles[new_x][new_y].walkable:
-                return False
-        except IndexError:  # Off the map
+        if not self.is_valid_coord(new_x, new_y):  # Off the map
+            return False
+
+        if not self.tiles[new_x][new_y].walkable:  # Not walkable
             return False
 
         for enemy in self.mechs:  # Check enemy mech collisions
