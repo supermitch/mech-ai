@@ -61,7 +61,7 @@ class World(object):
         move = move.lower()
         logging.debug('World updating move: <{}>'.format(move))
 
-        if move in ('wait'):
+        if move in ('wait',):
             return True, 'Move ok'
 
         if move in ('rotate cw', 'rotate ccw'):
