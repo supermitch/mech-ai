@@ -69,6 +69,28 @@ class World(object):
             self.player.rotate(direction)
             return True, 'Move ok'
 
+        if move in ('shoot',):
+            if self.player.ammo > 0:  # Don't go below zero
+                self.player.ammo -= 1
+            direction = self.player.orientation
+            movement = {
+                'north': (0, 1),
+                'east': (1, 0),
+                'south': (0, -1),
+                'west': (-1, 0),
+            }.get(direction.lower())
+            shot = self.player.pos  # start position
+            while self.is_valid_coord(*shot_pos):
+                shot[0] += movement[0]
+                shot[1] += movement[1]
+                if self.check_collisions(shot[0], shot[1]):
+                    for enemy in self.mechs:  # Check enemy mech collisions
+                        if enemy.pos == (shot[0], shot[1]):  # Occupied
+                            enemy.health -= 1
+                            self.player.score += 1
+                    break  # Stops at walls, but no points
+            return True, 'Move ok'
+
         movement = {
             'go north': (0, 1),
             'go east': (1, 0),
