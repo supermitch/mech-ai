@@ -41,10 +41,8 @@ class World(object):
         else:
             return True
 
-    def check_collisions(self, movement):
+    def check_collision(self, new_x, new_y):
         """ Ensure that move is valid. """
-        new_x = self.player.pos[0] + movement[0]
-        new_y = self.player.pos[1] + movement[1]
 
         if not self.is_valid_coord(new_x, new_y):  # Off the map
             return False
@@ -81,9 +79,10 @@ class World(object):
         if movement is None:
             return False, 'Unknown move <{}>'.format(move)
 
-        if self.check_collisions(movement):
-            self.player.pos[0] += movement[0]
-            self.player.pos[1] += movement[1]
+        new_x = self.player.pos[0] + movement[0]
+        new_y = self.player.pos[1] + movement[1]
+        if self.check_collisions(new_x, new_y):
+            self.player.pos = new_x, new_y
             return True, 'Move ok'
         else:
             return False, 'Failed collision check'
