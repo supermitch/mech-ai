@@ -41,7 +41,7 @@ class World(object):
         else:
             return True
 
-    def check_collision(self, new_x, new_y):
+    def check_collisions(self, new_x, new_y):
         """ Ensure that move is valid. """
 
         if not self.is_valid_coord(new_x, new_y):  # Off the map
