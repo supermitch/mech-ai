@@ -72,6 +72,8 @@ class World(object):
         if move in ('shoot',):
             if self.player.ammo > 0:  # Don't go below zero
                 self.player.ammo -= 1
+            else:
+                return False, 'No ammo'
             direction = self.player.orientation
             movement = {
                 'north': (0, 1),
