@@ -8,9 +8,9 @@ class Player(object):
     def __init__(self, name=None):
         self.name = name if name else ''
         self.pos = (0, 0)
-        self.health = 0
+        self.health = 10
         self.score = 0
-        self.ammo = 0
+        self.ammo = 10
         self.orientation = 'north'
 
     @property
