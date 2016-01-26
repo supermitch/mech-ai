@@ -82,7 +82,7 @@ class World(object):
                 'west': (-1, 0),
             }.get(direction.lower())
             shot = self.player.pos  # start position
-            while self.is_valid_coord(*shot_pos):
+            while self.is_valid_coord(*shot):
                 shot[0] += movement[0]
                 shot[1] += movement[1]
                 if self.check_collisions(shot[0], shot[1]):
