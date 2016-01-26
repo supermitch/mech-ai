@@ -195,18 +195,19 @@ def await_turn(url, headers, data):
     while True:  # Play until game ends
         logging.debug('Posting status:\n{}'.format(data))
         output = post_to_game(url, headers, data)
-        logging.debug('Received response:')
-        pprint.pprint(output, indent=2)
-
         if output is None:
             logging.error('Received None output from server')
             return
         elif output['message'] == 'Game complete':
+            print('Message: Game complete')
             return
         elif output['message'] == 'Not your turn':
+            print('Message: Not your turn')
             time.sleep(0.25)
         elif output['message'] == 'Your turn':
+            print('Message: Your turn')
             return output['state']
+
 
 def make_moves(url, headers, data):
     logging.debug('Attempting to make moves...')
@@ -215,24 +216,22 @@ def make_moves(url, headers, data):
         if state is None:  # Game complete
             return
 
+        print('State: {}'.format(state))
         data['message'] = 'move'  # Making a move
         data['move'] = ai.make_move(state)  # Determine move
-        logging.debug('Posting move:\n{}'.format(data))
+        print('Posting move: <{}>'.format(data['move']))
         output = post_to_game(url, headers, data)
-        logging.debug('Received response:')
-        pprint.pprint(output, indent=2)
+        if output is None:
+            logging.error('Received <None> output from server')
+            return
 
         del data['move']  # Erase contents each turn
         del data['message']
 
-        if output is None:
-            logging.error('Received None output from server')
+        print('Message: {}'.format(output['message']))
+        if output['message'] == 'Game complete':
             return
-        elif output['message'] == 'Game complete':
-            return
-        elif output['message'] == 'Move accepted':
-            continue
-        elif output['message'] == 'Move rejected':
+        elif output['message'] in ('Move accepted', 'Move rejected'):
             continue
 
 
