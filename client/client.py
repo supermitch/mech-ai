@@ -20,6 +20,12 @@ def setup_args():
     args.token = None if args.token is None else args.token[0]
     return args
 
+def print_state(state):
+    state = json.loads(state)
+    print('State:')
+    print('\tplayers: {}'.format(state['players']))
+    print('\tmap: {}'.format(state['map']))
+    print('\tturn: {}/{}'.format(state['current_turn'], state['max_turns']))
 
 def register_user(username):
     """ Register a new username. """
@@ -216,7 +222,7 @@ def make_moves(url, headers, data):
         if state is None:  # Game complete
             return
 
-        print('State: {}'.format(state))
+        print_state(state)
         data['message'] = 'move'  # Making a move
         data['move'] = ai.make_move(state)  # Determine move
         print('Posting move: <{}>'.format(data['move']))
