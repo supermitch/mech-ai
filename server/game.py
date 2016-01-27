@@ -62,7 +62,6 @@ class Game(object):
             'message': (success, reason),
             'state': self.state.json
         })
-        logging.debug('Game transactions: {}'.format(self.transactions))
 
         return success, reason
 
