@@ -21,11 +21,19 @@ def setup_args():
     return args
 
 def print_state(state):
-    state = json.loads(state)
+    state = json.loads(state)  # TODO: Why doesn't this load the entire state? Is state not jsonified properly?
     print('State:')
-    print('\tplayers: {}'.format(state['players']))
-    print('\tmap: {}'.format(state['map']))
     print('\tturn: {}/{}'.format(state['current_turn'], state['max_turns']))
+    print('\tplayers:')
+    for value in state['players'].values():
+        player = json.loads(value)  # TODO: We shouldn't have to do this.
+        print('\t\tname: {}'.format(player['name']))
+        print('\t\tpos: {}'.format(player['pos']))
+        print('\t\torientation: {}'.format(player['orientation']))
+        print('\t\thealth: {}'.format(player['health']))
+        print('\t\tammo: {}'.format(player['ammo']))
+        print('\t\tscore: {}'.format(player['score']))
+    print('\tmap:\n{}'.format(state['map']))
 
 def register_user(username):
     """ Register a new username. """
