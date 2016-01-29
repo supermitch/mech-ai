@@ -257,14 +257,23 @@ class ListGameHandler(BaseHandler):
         self.response.write(json.dumps(content))
 
 
+class ListGamePageHandler(BaseHandler):
+    def get(self):
+        print('in Handler')
+        data = webapp2.get_app().get_response('/api/v1/games/')
+        print(data)
+        self.render_template('games.html', data=data)
+
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
-    webapp2.Route('/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
-    webapp2.Route('/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
-    webapp2.Route('/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
-    webapp2.Route('/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
-    RedirectRoute('/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
-    RedirectRoute('/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET'], strict_slash=True),
-    webapp2.Route('/games/<id>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
-    webapp2.Route('/games/<username>/<id>', handler=ListGameHandler, name='games_list_user_id', methods=['GET']),
+    RedirectRoute('/games/', handler=ListGamePageHandler, name='games_list_page', methods=['GET'], strict_slash=True),
+    webapp2.Route('/api/v1/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
+    webapp2.Route('/api/v1/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
+    webapp2.Route('/api/v1/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
+    webapp2.Route('/api/v1/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
+    RedirectRoute('/api/v1/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
+    RedirectRoute('/api/v1/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET'], strict_slash=True),
+    webapp2.Route('/api/v1/games/<id>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
+    webapp2.Route('/api/v1/games/<username>/<id>', handler=ListGameHandler, name='games_list_user_id', methods=['GET']),
 ], debug=True)
