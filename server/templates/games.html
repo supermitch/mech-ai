@@ -17,7 +17,8 @@
 
       <h1>Mech-AI</h1>
 
-      <h2>Games</h2>
+      <h2>{% if username %}{{ username }}'s games{% else %}All games{% endif %}</h2>
+
 
       <ul>
         {% for game in games %}

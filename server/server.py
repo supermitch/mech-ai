@@ -270,7 +270,12 @@ class ListGamePageHandler(BaseHandler):
     """ Handler for template to list games. """
     def get(self, username=None, id=None):
         results = list_game_by_username_and_id(username, id)['results']  # Extract inner contents
-        self.render_template('games.html', games=results)
+        context = {
+            'games': results,
+            'username': username,
+            'id': id,
+        }
+        self.render_template('games.html', **context)
 
 
 app = webapp2.WSGIApplication([
