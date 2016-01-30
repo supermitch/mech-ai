@@ -237,43 +237,56 @@ class FindGameHandler(BaseHandler):
         self.response.write(json.dumps(content))
 
 
-class ListGameHandler(BaseHandler):
-    def get(self, username=None, id=None):
-        results = game_repo.find_by_username_and_id(username, id)
-        results = results if results else []
+def list_game_by_username_and_id(username, id):
+    """
+    Return game results as a dictionary, for given query params.
 
-        content = {
-            'results': [{
-                'id': game_model.key.id(),
-                'name': game_model.name,
-                'players': game_model.players,
-                'map_name': game_model.map_name,
-                'status': game_model.status,
-                'created': game_model.created.isoformat(),
-                'transactions': game_model.transactions,
-            } for game_model in results]
-        }
+    Common functionality to list games by username & id. Both can be None.
+    """
+    results = game_repo.find_by_username_and_id(username, id)
+    results = results if results else []
+    return {
+        'results': [{
+            'id': game_model.key.id(),
+            'name': game_model.name,
+            'players': game_model.players,
+            'map_name': game_model.map_name,
+            'status': game_model.status,
+            'created': game_model.created.isoformat(),
+            'transactions': game_model.transactions,
+        } for game_model in results]
+    }
+
+
+class ListGameHandler(BaseHandler):
+    """ Handler for API to list games. """
+    def get(self, username=None, id=None):
+        results = list_game_by_username_and_id(username, id)
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(content))
 
 
 class ListGamePageHandler(BaseHandler):
-    def get(self):
-        print('in Handler')
-        data = webapp2.get_app().get_response('/api/v1/games/')
-        print(data)
-        self.render_template('games.html', data=data)
+    """ Handler for template to list games. """
+    def get(self, username=None, id=None):
+        results = list_game_by_username_and_id(username, id)['results']  # Extract inner contents
+        self.render_template('games.html', games=results)
 
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     RedirectRoute('/games/', handler=ListGamePageHandler, name='games_list_page', methods=['GET'], strict_slash=True),
+    RedirectRoute('/games/<username>/', handler=ListGamePageHandler, name='games_list_user_page', methods=['GET'], strict_slash=True),
+    webapp2.Route('/games/<id>', handler=ListGamePageHandler, name='games_list_id_page', methods=['GET']),
+    webapp2.Route('/games/<username>/<id>', handler=ListGamePageHandler, name='games_list_user_id_page', methods=['GET']),
     webapp2.Route('/api/v1/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/api/v1/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
     webapp2.Route('/api/v1/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
     webapp2.Route('/api/v1/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
     RedirectRoute('/api/v1/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
+    # TODO: Alphanumeric usernames only
     RedirectRoute('/api/v1/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET'], strict_slash=True),
+    # TODO: Numeric ID only
     webapp2.Route('/api/v1/games/<id>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
     webapp2.Route('/api/v1/games/<username>/<id>', handler=ListGameHandler, name='games_list_user_id', methods=['GET']),
 ], debug=True)

@@ -19,7 +19,11 @@
 
       <h2>Games List</h2>
 
-      <p>My string: {{ data }}</p>
+      <ul>
+        {% for game in games %}
+        <li><a href="/games/{{ game.id }}/">{{ game.id }}: {{ game.name }}</a></li>
+        {% endfor %}
+      </ul>
 
       <p><a href="/games/create/">Create new game</a></p>
     </div>
