@@ -281,7 +281,7 @@ class ListGamePageHandler(BaseHandler):
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     RedirectRoute('/games/', handler=ListGamePageHandler, name='games_list_page', methods=['GET'], strict_slash=True),
-    RedirectRoute('/games/<username>/', handler=ListGamePageHandler, name='games_list_user_page', methods=['GET'], strict_slash=True),
+    webapp2.Route('/games/<username>/', handler=ListGamePageHandler, name='games_list_user_page', methods=['GET']),
     webapp2.Route('/games/<id>', handler=ListGamePageHandler, name='games_list_id_page', methods=['GET']),
     webapp2.Route('/games/<username>/<id>', handler=ListGamePageHandler, name='games_list_user_id_page', methods=['GET']),
     webapp2.Route('/api/v1/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
@@ -290,7 +290,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/v1/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
     RedirectRoute('/api/v1/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
     # TODO: Alphanumeric usernames only
-    RedirectRoute('/api/v1/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET'], strict_slash=True),
+    webapp2.Route('/api/v1/games/<username>/', handler=ListGameHandler, name='games_list_user', methods=['GET']),
     # TODO: Numeric ID only
     webapp2.Route('/api/v1/games/<id>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
     webapp2.Route('/api/v1/games/<username>/<id>', handler=ListGameHandler, name='games_list_user_id', methods=['GET']),

@@ -19,10 +19,9 @@
 
       <h2>{% if username %}{{ username }}'s games{% else %}All games{% endif %}</h2>
 
-
       <ul>
         {% for game in games %}
-          <li><a href="/games/{{ game.id }}/">{{ game.created }}: {{ game.name }}</a>
+          <li><a href="/games/{{ game.id }}">{{ game.created }}: {{ game.name }}</a>
           {% set comma = joiner(', ') %}
           [{% for player in game.players %}{{ comma() }}<a href="/games/{{player}}/">{{ player }}</a>{% endfor %}]</li>
         {% endfor %}
