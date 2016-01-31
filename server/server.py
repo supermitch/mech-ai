@@ -284,12 +284,11 @@ class ListGamePageHandler(BaseHandler):
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     RedirectRoute('/games/', handler=ListGamePageHandler, name='games_list_page', methods=['GET'], strict_slash=True),
-    webapp2.Route('/games/<id>', handler=ListGamePageHandler, name='games_list_id_page', methods=['GET']),
+    webapp2.Route('/games/<id:[0-9]+$>', handler=ListGamePageHandler, name='games_list_id_page', methods=['GET']),
     webapp2.Route('/api/v1/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
     webapp2.Route('/api/v1/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
     webapp2.Route('/api/v1/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
     webapp2.Route('/api/v1/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
     RedirectRoute('/api/v1/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
-    # TODO: Numeric ID only
-    webapp2.Route('/api/v1/games/<id>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
+    webapp2.Route('/api/v1/games/<id:[0-9]+$>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
 ], debug=True)
