@@ -120,7 +120,7 @@ def create_game(username, access_token, name, players, rounds):
     """ Create a new game. """
     logging.debug('Attempting to create game...')
 
-    path = '/games/create'
+    path = '/api/v1/games/create'
     url = config.host + path
     headers = {
         'username': username,
@@ -152,7 +152,9 @@ def create_game(username, access_token, name, players, rounds):
 def find_game(username, access_token):
     """ Attempt to locate a game to play, for the given username. """
     logging.debug('Attempting to find a game...')
-    path = '/games/find'
+    # TODO: Why are we not using our /api/v1/games/?user=x route?
+    # TODO: This games/find seems redundant
+    path = '/api/v1/games/find'
     url = config.host + path
     headers = {
         'username': username,
@@ -252,7 +254,7 @@ def make_moves(url, headers, data):
 def play_game(game_id, username, access_token):
     """ Get a game ID for an existing game, if you are a listed player. """
     logging.debug('Attempting to play game...')
-    url = config.host + '/games/play'
+    url = config.host + '/api/v1/games/play'
     headers = {
         'username': username,
         'access_token': access_token
