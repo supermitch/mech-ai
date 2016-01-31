@@ -264,7 +264,7 @@ class ListGameHandler(BaseHandler):
         username = self.request.get('user')
         results = list_game_by_username_and_id(username, id)
         self.response.content_type = 'application/json'
-        self.response.write(json.dumps(content))
+        self.response.write(json.dumps(results))
 
 
 class ListGamePageHandler(BaseHandler):
