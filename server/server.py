@@ -4,7 +4,7 @@ import os
 
 import webapp2
 from webapp2_extras import jinja2
-from webapp2_extras.routes import RedirectRoute
+from webapp2_extras.routes import RedirectRoute, PathPrefixRoute
 
 import tokens
 from models import user_repo, game_repo
@@ -283,12 +283,16 @@ class ListGamePageHandler(BaseHandler):
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
-    RedirectRoute('/games/', handler=ListGamePageHandler, name='games_list_page', methods=['GET'], strict_slash=True),
-    webapp2.Route('/games/<id:[0-9]+$>', handler=ListGamePageHandler, name='games_list_id_page', methods=['GET']),
-    webapp2.Route('/api/v1/users/register', handler=RegistrationHandler, name='registration', methods=['POST']),
-    webapp2.Route('/api/v1/games/create', handler=CreateGameHandler, name='games_create', methods=['POST']),
-    webapp2.Route('/api/v1/games/play', handler=PlayGameHandler, name='games_play', methods=['POST']),
-    webapp2.Route('/api/v1/games/find', handler=FindGameHandler, name='games_find', methods=['GET']),
-    RedirectRoute('/api/v1/games/', handler=ListGameHandler, name='games_list', methods=['GET'], strict_slash=True),
-    webapp2.Route('/api/v1/games/<id:[0-9]+$>', handler=ListGameHandler, name='games_list_id', methods=['GET']),
+    PathPrefixRoute('/games', [
+        RedirectRoute('/', handler=ListGamePageHandler, name='games_list_page', methods=['GET'], strict_slash=True),
+        webapp2.Route('/<id:[0-9]+$>', handler=ListGamePageHandler, name='game_show_page', methods=['GET']),
+    ]),
+    PathPrefixRoute('/api/v1/games', [
+        webapp2.Route('/play', handler=PlayGameHandler, name='games_play_api', methods=['POST']),
+        webapp2.Route('/find', handler=FindGameHandler, name='games_find_api', methods=['GET']),
+        RedirectRoute('/', handler=ListGameHandler, name='games_list_api', methods=['GET'], strict_slash=True),
+        webapp2.Route('/<id:[0-9]+$>', handler=ListGameHandler, name='game_show_api', methods=['GET']),
+    ]),
+    webapp2.Route('/api/v1/users/register', handler=RegistrationHandler, name='user_registration_api', methods=['POST']),
+    webapp2.Route('/create', handler=CreateGameHandler, name='games_create_api', methods=['POST']),
 ], debug=True)
