@@ -160,10 +160,10 @@ def handle_client_message(username, game, json_object):
                 else:
                     content['message'] = 'Move rejected: {}'.format(reason)
 
-                self.transactions.append({
-                    'move': move,
+                game.transactions.append({
+                    'move': json_object['move'],
                     'message': (success, reason),
-                    'state': self.state.json
+                    'state': game.state.json
                 })
             else:
                 logging.debug('It is not your turn')
