@@ -281,6 +281,31 @@ class ListGamePageHandler(BaseHandler):
         self.render_template('games.html', **context)
 
 
+def list_users_by_username(username):
+    """
+    Return user results as a dictionary, for given query params.
+
+    Common functionality to list users by username & id. Both can be None.
+    """
+    results = user_repo.find_by_username(username)
+    results = results if results else []
+    return {
+        'results': [{
+            'username': user_model.username,
+            'access_token': user_model.access_token,
+        } for user_model in results]
+    }
+
+
+class ListUserHandler(BaseHandler):
+    """ Handler for API to list users. """
+    def get(self):
+        username = self.request.get('user')
+        results = list_users_by_username(username)
+        self.response.content_type = 'application/json'
+        self.response.write(json.dumps(results))
+
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     PathPrefixRoute('/games', [
@@ -293,6 +318,9 @@ app = webapp2.WSGIApplication([
         RedirectRoute('/', handler=ListGameHandler, name='games_list_api', methods=['GET'], strict_slash=True),
         webapp2.Route('/<id:[0-9]+$>', handler=ListGameHandler, name='game_show_api', methods=['GET']),
     ]),
-    webapp2.Route('/api/v1/users/register', handler=RegistrationHandler, name='user_registration_api', methods=['POST']),
+    PathPrefixRoute('/api/v1/users', [
+        RedirectRoute('/', handler=ListUserHandler, name='users_list_api', methods=['GET'], strict_slash=True),
+        webapp2.Route('/register', handler=RegistrationHandler, name='user_registration_api', methods=['POST']),
+    ]),
     webapp2.Route('/create', handler=CreateGameHandler, name='games_create_api', methods=['POST']),
 ], debug=True)
