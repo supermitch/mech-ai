@@ -23,8 +23,11 @@ class UserRepo(object):
         user.put()
         return user
 
-    def find_by_username(self, username):
-        return UserModel.query(UserModel.username==username).get()
+    def find_by_username(self, username=None):
+        if username:
+            return UserModel.query(UserModel.username==username).get()
+        else:
+            return UserModel.query()
 
     def find_by_access_token(self, access_token):
         return UserModel.query(UserModel.access_token==access_token).get()
