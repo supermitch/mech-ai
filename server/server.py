@@ -314,14 +314,14 @@ app = webapp2.WSGIApplication([
         webapp2.Route('/<id:[0-9]+$>', handler=ListGamePageHandler, name='game_show_page', methods=['GET']),
     ]),
     PathPrefixRoute('/api/v1/games', [
+        RedirectRoute('/', handler=ListGameHandler, name='games_list_api', methods=['GET'], strict_slash=True),
+        webapp2.Route('/create', handler=CreateGameHandler, name='games_create_api', methods=['POST']),
         webapp2.Route('/play', handler=PlayGameHandler, name='games_play_api', methods=['POST']),
         webapp2.Route('/find', handler=FindGameHandler, name='games_find_api', methods=['GET']),
-        RedirectRoute('/', handler=ListGameHandler, name='games_list_api', methods=['GET'], strict_slash=True),
         webapp2.Route('/<id:[0-9]+$>', handler=ListGameHandler, name='game_show_api', methods=['GET']),
     ]),
     PathPrefixRoute('/api/v1/users', [
         RedirectRoute('/', handler=ListUserHandler, name='users_list_api', methods=['GET'], strict_slash=True),
         webapp2.Route('/register', handler=RegistrationHandler, name='user_registration_api', methods=['POST']),
     ]),
-    webapp2.Route('/create', handler=CreateGameHandler, name='games_create_api', methods=['POST']),
 ], debug=True)
