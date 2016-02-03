@@ -14,6 +14,7 @@ class UserModel(ndb.Model):
     """ Models a user of the system. """
     username = ndb.StringProperty(required=True)
     access_token = ndb.StringProperty(required=True)
+    created = ndb.DateProperty(auto_now_add=True)
 
 
 class UserRepo(object):

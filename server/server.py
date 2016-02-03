@@ -293,6 +293,7 @@ def list_users_by_username(username):
         'results': [{
             'username': user_model.username,
             'access_token': user_model.access_token,
+            'created': user_model.created,
         } for user_model in results]
     }
 
