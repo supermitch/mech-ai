@@ -38,7 +38,7 @@ def print_state(state):
 def register_user(username):
     """ Register a new username. """
     logging.debug('Attempting to register username: {} ...'.format(username))
-    path = '/users/register'
+    path = '/api/v1/users/register'
     url = config.host + path
     data = {'username': username}
     r = requests.post(url, data=json.dumps(data))
