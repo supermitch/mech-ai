@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Mech-AI Template Example</title>
+    <title>Users | Mech-AI</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <style type="text/css">
@@ -13,16 +13,19 @@
   </head>
   <body>
     <div class="container">
+      <p><a href="/">Home</a></p>
+
       <h1>Mech-AI</h1>
 
-      <p>Welcome to <strong>Mech-AI</strong></p>
+      <h2>{% if username %}{{ username }}{% else %}All users{% endif %}</h2>
 
       <ul>
-        <li><a href="/instructions">Instructions</a></li>
-        <li><a href="/rules">Rules</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/games/">Search games</a></li>
-        <li><a href="/users/">Search users</a></li>
+        {% for user in users %}
+        <li><a href="/users/{{ user.username }}">{{ user.username }}</a>
+        - <a href="/games/?user={{user.username}}">view games</a>
+        - Joined {{ user.created }}
+        </li>
+        {% endfor %}
       </ul>
 
     </div>

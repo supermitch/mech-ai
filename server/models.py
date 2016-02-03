@@ -26,9 +26,13 @@ class UserRepo(object):
 
     def find_by_username(self, username=None):
         if username:
-            return UserModel.query(UserModel.username==username).get()
+            result = UserModel.query(UserModel.username==username).get()
         else:
-            return UserModel.query()
+            result = UserModel.query()
+        if result:
+            if not hasattr(result, '__iter__'):  # Is not a list
+                result = [result]
+        return result
 
     def find_by_access_token(self, access_token):
         return UserModel.query(UserModel.access_token==access_token).get()

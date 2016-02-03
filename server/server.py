@@ -307,11 +307,26 @@ class ListUserHandler(BaseHandler):
         self.response.write(json.dumps(results))
 
 
+class ListUserPageHandler(BaseHandler):
+    """ Handler for template to list users. """
+    def get(self, username=None):
+        results = list_users_by_username(username)['results']  # Extract inner contents
+        context = {
+            'users': results,
+            'username': username,
+        }
+        self.render_template('users.html', **context)
+
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     PathPrefixRoute('/games', [
         RedirectRoute('/', handler=ListGamePageHandler, name='games_list_page', methods=['GET'], strict_slash=True),
         webapp2.Route('/<id:[0-9]+$>', handler=ListGamePageHandler, name='game_show_page', methods=['GET']),
+    ]),
+    PathPrefixRoute('/users', [
+        RedirectRoute('/', handler=ListUserPageHandler, name='users_list_page', methods=['GET'], strict_slash=True),
+        webapp2.Route('/<username>', handler=ListUserPageHandler, name='users_show_page', methods=['GET']),
     ]),
     PathPrefixRoute('/api/v1/games', [
         RedirectRoute('/', handler=ListGameHandler, name='games_list_api', methods=['GET'], strict_slash=True),
