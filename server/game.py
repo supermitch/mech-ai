@@ -57,11 +57,5 @@ class Game(object):
             if self.state.current_turn == self.state.max_turns:
                 self.status = GAME_STATUS.complete
 
-        self.transactions.append({
-            'move': move,
-            'message': (success, reason),
-            'state': self.state.json
-        })
-
         return success, reason
 
