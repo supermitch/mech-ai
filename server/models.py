@@ -24,15 +24,11 @@ class UserRepo(object):
         user.put()
         return user
 
-    def find_by_username(self, username=None):
+    def find_by_username(self, username=None, limit=100):
         if username:
-            result = UserModel.query(UserModel.username==username).get()
+            return [UserModel.query(UserModel.username==username).get()]  # Listify
         else:
-            result = UserModel.query()
-        if result:
-            if not hasattr(result, '__iter__'):  # Is not a list
-                result = [result]
-        return result
+            return UserModel.query().fetch(limit=limit)
 
     def find_by_access_token(self, access_token):
         return UserModel.query(UserModel.access_token==access_token).get()
@@ -107,16 +103,13 @@ class GameRepo(object):
         """ Return a single game for this user that is in the lobby. """
         return GameModel.query(GameModel.players==username, GameModel.status=='lobby').get()
 
-    def find_by_username_and_id(self, username=None, id=None):
-        result = GameModel.query()
+    def find_by_username_and_id(self, username=None, id=None, limit=100):
         if username:
-            result = result.filter(GameModel.players==username)
-        if id:
-            result = self.find_by_id(id)  # Should return a list of results
-        if result:
-            if not hasattr(result, '__iter__'):  # Is not a list
-                result = [result]
-        return result
+            return GameModel.query().filter(GameModel.players==username).fetch(limit=limit)
+        elif id:
+            return [self.find_by_id(id)]
+        else:
+            return GameModel.query().fetch(limit=limit)
 
 
 user_repo = UserRepo()
