@@ -30,6 +30,9 @@ class UserRepo(object):
         else:
             return UserModel.query().fetch(limit=limit)
 
+    def get_by_username(self, username):
+        return self.find_by_username(username)[0]
+
     def find_by_access_token(self, access_token):
         return UserModel.query(UserModel.access_token==access_token).get()
 
