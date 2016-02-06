@@ -14,16 +14,21 @@ class Player(object):
         self.orientation = 'north'
 
     @property
-    def json(self):
-        """ Turn object into JSON for storage. """
-        return json.dumps({
+    def jsonable(self):
+        """ Turn object into JSON repr. """
+        return {
             'name': self.name,
             'pos': self.pos,
             'health': self.health,
             'score': self.score,
             'ammo': self.ammo,
             'orientation': self.orientation,
-        }, default=json_serializer)
+        }
+
+    @property
+    def json(self):
+        """ Turn object into JSON for storage. """
+        return json.dumps(self.jsonable, default=json_serializer)
 
     def load_from_json(self, json_data):
         """ Load attributes from JSON storage. """

@@ -16,16 +16,19 @@ class State(object):
         else:
             self.players = {}  # List of Player() objects
 
-
     @property
-    def json(self):
-        """ Turn object into JSON for storage. """
-        return json.dumps({
+    def jsonable(self):
+        return {
             'map': self.map,
             'current_turn': self.current_turn,
             'max_turns': self.max_turns,
             'players': {player.name: player.json for player in self.players.values()},
-        }, default=json_serializer)
+        }
+
+    @property
+    def json(self):
+        """ Turn object into JSON for storage. """
+        return json.dumps(self.jsonable, default=json_serializer)
 
     def load_from_json(self, json_data):
         """ Load attributes from JSON storage. """

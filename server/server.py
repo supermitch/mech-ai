@@ -84,7 +84,7 @@ class CreateGameHandler(BaseHandler):
         game.transactions.append({
             'move': None,
             'message': (True, 'Initial state'),
-            'state': game.state.json
+            'state': game.state.jsonable,
         })
         game_model = game_repo.persist(game)
 
