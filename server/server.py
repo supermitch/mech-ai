@@ -49,8 +49,8 @@ class RegistrationHandler(BaseHandler):
         self.validate_json_fields(['username'], json_object)
 
         posted_username = json_object['username']
-        existing_user = user_repo.find_by_username(posted_username)
-        if existing_user is None:
+        existing_user = user_repo.get_by_username(posted_username)
+        if not existing_user:
             user = user_repo.create(username=posted_username)
             content = {
                 'username': user.username,
@@ -59,7 +59,7 @@ class RegistrationHandler(BaseHandler):
             }
         else:
             content = {
-                'username': posted_username,
+                'username': None,
                 'access_token': None,
                 'message': 'Registration failed: username <{}> already exists'.format(posted_username),
             }

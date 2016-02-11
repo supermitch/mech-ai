@@ -49,12 +49,13 @@ def register_user(username):
         return None
 
     output = r.json()
-    logging.debug('\t' + output['message'])
     username, access_token = output['username'], output['access_token']
     if access_token is not None:
         print('Registration successful!')
         print('\tUsername: {}'.format(username))
         print('\tAccess token: {}'.format(access_token))
+    else:
+        print('Registration failed.')
 
     return username, access_token
 
@@ -123,8 +124,8 @@ def create_game(username, access_token, name, players, rounds):
     path = '/api/v1/games/create'
     url = config.host + path
     headers = {
-        'username': username,
-        'access_token': access_token
+        'Username': username,
+        'Access-Token': access_token
     }
     data = json.dumps({
         'name': name,
@@ -277,8 +278,9 @@ def main():
         print('\t4. Quit')
         ans = raw_input('> ')
         if ans == '1':
-            new_user, new_token = register_user(prompt_username())
-            username, access_token = prompt_switch_username(new_user, new_token, username, access_token)
+            new_username, new_token = register_user(prompt_username())
+            if new_username is not None:
+                username, access_token = prompt_switch_username(new_username, new_token, username, access_token)
         elif ans == '2':
             name, rounds, players = prompt_create_game(username)
             game_id = create_game(username, access_token, name=name, players=players, rounds=rounds)
