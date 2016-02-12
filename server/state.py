@@ -61,3 +61,11 @@ class State(object):
         for player, coords in zip(self.players.values(), possible_positions):
             player.position = coords
 
+    def increment_turn(self):
+        """ Increment current turn counter. """
+        self.current_turn += 1
+
+    @property
+    def game_complete(self):
+        """ Return true if all our turns are over. """
+        return self.current_turn == self.max_turns
