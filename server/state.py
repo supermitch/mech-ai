@@ -8,13 +8,14 @@ from player import Player
 class State(object):
     def __init__(self, map=None, rounds=23, players=None):
         self.map = map
-        self.max_turns = rounds
         self.current_turn = 0
         if players:
             self.players = {name: Player(name) for name in players}
             self.set_start_positions()
+            self.max_turns = rounds * len(players)
         else:
             self.players = {}  # List of Player() objects
+            self.max_turns = 0
 
     @property
     def jsonable(self):
