@@ -36,6 +36,7 @@ class Game(object):
         self.name = name if name else 'Mech AI'
         self.map_name = map_name if map_name else 'default'
         self.players = players  # List of player usernames
+        self.winner = None
         self.status = GAME_STATUS.lobby
         self.created = datetime.datetime.now()
 
