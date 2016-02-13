@@ -98,7 +98,8 @@ def prompt_game_id(username, access_token):
 
 def prompt_select_map():
     """ Choose a valid map name. """
-    choices = query_maps_api()
+    choices = query_maps_api()['maps']
+    print(choices)
     for i, map in enumerate(choices, start=1):
         print('\t{}. {}'.format(i, map))
     while True:
