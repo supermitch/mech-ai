@@ -13,9 +13,7 @@ class World(object):
 
     def generate_tiles(self, state):
         """ Generate a tileset from the game state. """
-        logging.debug('Generating tiles...')
-        map = state.map
-        rows = map.split()
+        rows = state.map.split()[::-1]  # Y-axis is positive, so start at the bottom
         height = len(rows)
         width = len(rows[0])
         self.tiles = [[None for _ in range(height)] for _ in range(width)]
@@ -36,7 +34,7 @@ class World(object):
 
     def is_valid_coord(self, x, y):
         """ Check if a coordinate is within map bounds. """
-        if x < 0 or y < 0 or x > len(self.tiles) or y > len(self.tiles[0]):
+        if x < 0 or x > len(self.tiles) or y < 0 or y > len(self.tiles[0]):
             return False
         else:
             return True
