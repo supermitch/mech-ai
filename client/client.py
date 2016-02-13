@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import os
 import pprint
 import random
 import requests
@@ -98,14 +99,16 @@ def prompt_game_id(username, access_token):
 
 def prompt_select_map():
     """ Choose a valid map name. """
-    choices = query_maps_api()['maps']
-    print(choices)
-    for i, map in enumerate(choices, start=1):
-        print('\t{}. {}'.format(i, map))
+    map_paths = query_maps_api()['maps']
+    map_names = [os.path.basename(map_path) for map_path in map_paths]
+    for i, map_name in enumerate(map_names, start=1):
+        print('\t{}. {}'.format(i, map_name))
     while True:
         answer = raw_input('Select a map: ')
+        if answer == '':
+            return map_names[0]
         try:
-            return choices[int(answer) - 1]
+            return map_names[int(answer) - 1]
         except ValueError:
             print('Please enter a number')
         except IndexError:
@@ -130,7 +133,7 @@ def prompt_create_game(username):
     answer = raw_input('Enter list of player usernames: ')
     players = [username] if answer == '' else [x.strip() for x in answer.split()]
 
-    return name, rounds, players
+    return name, map_name, rounds, players
 
 
 def create_game(username, access_token, name, players, rounds):
@@ -176,7 +179,6 @@ def query_maps_api():
     except requests.exceptions.HTTPError as e:
         logging.warn('Bad response: {}\n{}'.format(r.status_code, e))
         return None
-    print(r.json())
     return r.json()
 
 
@@ -313,7 +315,7 @@ def main():
             if new_username is not None:
                 username, access_token = prompt_switch_username(new_username, new_token, username, access_token)
         elif ans == '2':
-            name, rounds, players = prompt_create_game(username)
+            name, map, rounds, players = prompt_create_game(username)
             game_id = create_game(username, access_token, name=name, players=players, rounds=rounds)
         elif ans == '3':
             game_id = prompt_game_id(username, access_token)
