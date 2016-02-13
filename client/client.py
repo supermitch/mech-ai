@@ -271,12 +271,13 @@ def main():
     username = args.username if args.username else config.username
     access_token = args.token if args.token else config.access_token
     while True:
+        print('\nLogged in as <{}>'.format(username))
         print('Choose an option:')
         print('\t1. Register new username')
         print('\t2. Create new game')
         print('\t3. Join existing game')
         print('\t4. Quit')
-        ans = raw_input('> ')
+        ans = raw_input('\t> ')
         if ans == '1':
             new_username, new_token = register_user(prompt_username())
             if new_username is not None:
@@ -289,10 +290,10 @@ def main():
             if game_id:
                 play_game(game_id, username, access_token)
         elif ans == '4':
-            print('Thanks for playing.')
+            print('Thanks for playing!\n')
             break
         else:
-            print('Choose a valid option (1-4)')
+            print('Please choose a valid option (1-4)')
 
 
 if __name__ == '__main__':
