@@ -96,12 +96,27 @@ def prompt_game_id(username, access_token):
         else:
             return game_id
 
+def prompt_select_map():
+    """ Choose a valid map name. """
+    choices = query_maps_api()
+    for i, map in enumerate(choices, start=1):
+        print('\t{}. {}'.format(i, map))
+    while True:
+        answer = raw_input('Select a map: ')
+        try:
+            return choices[int(answer) - 1]
+        except ValueError:
+            print('Please enter a number')
+        except IndexError:
+            print('Please select one of the above')
 
 def prompt_create_game(username):
     """ Gather inputs required to create a game. """
 
     answer = raw_input('Enter game name: ')
     name = 'Mech AI' if answer == '' else answer
+
+    map_name = prompt_select_map()
 
     while True:
         answer = raw_input('Enter number of rounds: ')
@@ -148,6 +163,20 @@ def create_game(username, access_token, name, players, rounds):
         print('\tPlayers: {}'.format(', '.join(players)))
         print('\tRounds: {}'.format(rounds))
     return game_id
+
+
+def query_maps_api():
+    """ Post data to our game and get JSON response. """
+    path = '/api/v1/maps/'
+    url = config.host + path
+    r = requests.get(url)
+    try:
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        logging.warn('Bad response: {}\n{}'.format(r.status_code, e))
+        return None
+    print(r.json())
+    return r.json()
 
 
 def find_game(username, access_token):

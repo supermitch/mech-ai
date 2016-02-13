@@ -7,6 +7,7 @@ from webapp2_extras import jinja2
 from webapp2_extras.routes import RedirectRoute, PathPrefixRoute
 
 import tokens
+import map_loader
 from models import user_repo, game_repo
 from game import Game, GAME_STATUS
 
@@ -318,6 +319,14 @@ class ListUserPageHandler(BaseHandler):
         self.render_template('users.html', **context)
 
 
+class ListMapsHandler(BaseHandler):
+    """ Handler for template to list users. """
+    def get(self):
+        context = {'maps': map_loader.list_maps()}
+        self.response.content_type = 'application/json'
+        self.response.write(json.dumps(context))
+
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=IndexHandler, name='home', methods=['GET']),
     PathPrefixRoute('/games', [
@@ -338,5 +347,8 @@ app = webapp2.WSGIApplication([
     PathPrefixRoute('/api/v1/users', [
         RedirectRoute('/', handler=ListUserHandler, name='users_list_api', methods=['GET'], strict_slash=True),
         webapp2.Route('/register', handler=RegistrationHandler, name='user_registration_api', methods=['POST']),
+    ]),
+    PathPrefixRoute('/api/v1/maps', [
+        RedirectRoute('/', handler=ListMapsHandler, name='maps_list_api', methods=['GET'], strict_slash=True),
     ]),
 ], debug=True)
