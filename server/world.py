@@ -36,7 +36,7 @@ class World(object):
 
     def is_valid_coord(self, x, y):
         """ Check if a coordinate is within map bounds. """
-        if x < 0 or y < 0 or y > len(self.tiles) or x > len(self.tiles[0]):
+        if x < 0 or y < 0 or x > len(self.tiles) or y > len(self.tiles[0]):
             return False
         else:
             return True
