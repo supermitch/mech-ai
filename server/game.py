@@ -54,8 +54,8 @@ class Game(object):
 
         if success:
             self.queue.increment_move()
-            self.state.current_turn += 1
-            if self.state.current_turn == self.state.max_turns:
+            self.state.increment_turn()
+            if self.state.game_complete:
                 self.status = GAME_STATUS.complete
 
         return success, reason
