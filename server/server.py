@@ -164,7 +164,7 @@ def handle_client_message(username, game, json_object):
                 game.transactions.append({
                     'move': json_object['move'],
                     'message': (success, reason),
-                    'state': game.state.json
+                    'state': game.state.jsonable,
                 })
             else:
                 logging.debug('It is not your turn')
