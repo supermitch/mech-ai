@@ -23,7 +23,7 @@ class State(object):
             'map': self.map,
             'current_turn': self.current_turn,
             'max_turns': self.max_turns,
-            'players': {player.name: player.json for player in self.players.values()},
+            'players': {player.name: player.jsonable for player in self.players.values()},
         }
 
     @property
@@ -40,7 +40,7 @@ class State(object):
                 players = {}
                 for key, value in value.items():
                     player = Player()
-                    player.load_from_json(value)
+                    player.load_from_data(value)
                     players[key] = player
                 setattr(self, 'players', players)
             else:

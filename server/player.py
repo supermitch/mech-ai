@@ -32,7 +32,10 @@ class Player(object):
 
     def load_from_json(self, json_data):
         """ Load attributes from JSON storage. """
-        data = json.loads(json_data)
+        self.load_from_data(json.loads(json_data))
+
+    def load_from_data(self, data):
+        """ Load attribs from a dictionary. """
         for key, value in data.items():
             setattr(self, key, value)
 

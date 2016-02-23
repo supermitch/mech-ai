@@ -26,8 +26,7 @@ def print_state(state):
     print('State:')
     print('\tturn: {}/{}'.format(state['current_turn'], state['max_turns']))
     print('\tplayers:')
-    for value in state['players'].values():
-        player = json.loads(value)  # TODO: We shouldn't have to do this.
+    for player in state['players'].values():
         print('\t\tname: {}'.format(player['name']))
         print('\t\tpos: {}'.format(player['pos']))
         print('\t\torientation: {}'.format(player['orientation']))
