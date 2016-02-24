@@ -254,7 +254,7 @@ def list_game_by_username_and_id(username, id):
             'map_name': game_model.map_name,
             'status': game_model.status,
             'created': game_model.created.isoformat(),
-            'transactions': game_model.transactions,
+            'transactions': json.loads(game_model.transactions),
         } for game_model in results]
     }
 
