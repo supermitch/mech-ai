@@ -272,7 +272,6 @@ class ListGamePageHandler(BaseHandler):
     """ Handler for template to list games. """
     def get(self, id=None):
         username = self.request.get('user')
-        print('username {}'.format(username))
         results = list_game_by_username_and_id(username, id)['results']  # Extract inner contents
         context = {
             'games': results,
