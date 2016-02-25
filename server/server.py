@@ -144,6 +144,7 @@ def handle_client_message(username, game, json_object):
         elif game.status == GAME_STATUS.complete:
             logging.debug('Game is complete!')
             content['message'] = 'Game complete'
+            content['state'] = game.state.json  # Return state either way
         else:
             logging.error('Unknown game status: {}'.format(game.status))
 
@@ -173,6 +174,7 @@ def handle_client_message(username, game, json_object):
         elif game.status == GAME_STATUS.complete:
             logging.debug('Game is complete!')
             content['message'] = 'Game complete'
+            content['state'] = game.state.json  # Return state either way
         else:
             logging.error('Unknown game status: {}'.format(game.status))
 

@@ -245,23 +245,26 @@ def await_turn(url, headers, data):
         output = post_to_game(url, headers, data)
         if output is None:
             logging.error('Received None output from server')
-            return
+            return None, None
         elif output['message'] == 'Game complete':
             print('Message: Game complete')
-            return
+            return 'Game complete', output['state']
         elif output['message'] == 'Not your turn':
             print('Message: Not your turn')
             time.sleep(0.25)
         elif output['message'] == 'Your turn':
             print('Message: Your turn')
-            return output['state']
+            return 'Your turn', output['state']
 
 
 def make_moves(url, headers, data):
     logging.debug('Attempting to make moves...')
     while True:  # Play until game ends
-        state = await_turn(url, headers, data)  # Poll until we get a state (it's our turn)
-        if state is None:  # Game complete
+        message, state = await_turn(url, headers, data)  # Poll until we get a state (it's our turn)
+        if message is None:  # Game complete
+            return
+        if message == 'Game complete':  # TODO: this is horrible. Do printing elsewhere.
+            print_state(state)
             return
 
         print_state(state)
