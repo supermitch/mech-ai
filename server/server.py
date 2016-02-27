@@ -113,7 +113,7 @@ def handle_client_message(username, game, json_object):
                 content['message'] = 'Game started'
             else:
                 logging.debug('Game gueue is incomplete')
-                content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
+                content['message'] = 'Waiting for players {}'.format(game.not_joined)
         elif game.status == GAME_STATUS.playing:
             logging.debug('Game in progess')
             content['message'] = 'Game started'  # Stop joining
@@ -126,7 +126,7 @@ def handle_client_message(username, game, json_object):
     elif message == 'status':
         if game.status == GAME_STATUS.lobby:
             logging.debug('Game gueue is incomplete')
-            content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
+            content['message'] = 'Waiting for players {}'.format(game.not_joined)
         elif game.status == GAME_STATUS.playing:
             if game.queue.is_turn(username):
                 logging.debug('It is your turn, {}'.format(username))
@@ -145,7 +145,7 @@ def handle_client_message(username, game, json_object):
     elif message == 'move':
         if game.status == GAME_STATUS.lobby:
             logging.debug('Game gueue is incomplete')
-            content['message'] = 'Waiting for players {}'.format(', '.join(game.queue.not_joined))
+            content['message'] = 'Waiting for players {}'.format(game.not_joined)
 
         elif game.status == GAME_STATUS.playing:
             if game.queue.is_turn(username):

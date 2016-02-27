@@ -52,6 +52,11 @@ class Game(object):
             'state': game.state.jsonable,
         })
 
+    @property
+    def not_joined(self):
+        """ Return list of unjoined players. """
+        return ', '.join(self.queue.not_joined)
+
     def set_user_status(self, username, status):
         """ Update Queue with new status. """
         self.queue.set_status(username, status)
