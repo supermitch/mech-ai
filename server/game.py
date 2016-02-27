@@ -46,6 +46,11 @@ class Game(object):
 
         self.queue = queue.Queue(players=players)
         self.transactions = []
+        self.transactions.append({
+            'move': None,
+            'message': (True, 'Initial state'),
+            'state': game.state.jsonable,
+        })
 
     def set_user_status(self, username, status):
         """ Update Queue with new status. """
@@ -62,5 +67,10 @@ class Game(object):
             if self.state.game_complete:
                 self.status = GAME_STATUS.complete
 
+        self.transactions.append({
+            'move': move,
+            'message': (success, reason),
+            'state': self.state.jsonable,
+        })
         return success, reason
 

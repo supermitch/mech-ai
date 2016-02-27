@@ -82,11 +82,6 @@ class CreateGameHandler(BaseHandler):
         map_name = json_object.get('map', 'Default')
 
         game = Game(players=players, map_name=map_name, name=name, rounds=rounds)
-        game.transactions.append({
-            'move': None,
-            'message': (True, 'Initial state'),
-            'state': game.state.jsonable,
-        })
         game_model = game_repo.persist(game)
 
         content = {
@@ -160,12 +155,6 @@ def handle_client_message(username, game, json_object):
                     content['message'] = 'Move successful'
                 else:
                     content['message'] = 'Move rejected: {}'.format(reason)
-
-                game.transactions.append({
-                    'move': json_object['move'],
-                    'message': (success, reason),
-                    'state': game.state.jsonable,
-                })
             else:
                 logging.debug('It is not your turn')
                 content['message'] = 'Not your turn'
