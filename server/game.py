@@ -47,6 +47,10 @@ class Game(object):
         self.queue = queue.Queue(players=players)
         self.transactions = []
 
+    def set_user_status(self, username, status):
+        """ Update Queue with new status. """
+        self.queue.set_status(username, status)
+
     def update(self, username, move):
         """ Execute a round. """
         the_world = world.World(self)  # Convert our self (a game object) into a World

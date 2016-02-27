@@ -1,4 +1,5 @@
 import datetime
+import logging
 import json
 
 import utils
@@ -48,6 +49,7 @@ class Queue(object):
         """ Set new status and update time stamp. """
         self.statuses[player] = status
         self.time_stamps[player] = datetime.datetime.now()
+        logging.debug('Statuses: {}'.format(self.statuses))
 
     @property
     def json(self):

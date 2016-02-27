@@ -110,8 +110,7 @@ def handle_client_message(username, game, json_object):
     if message == 'join':
         if game.status == GAME_STATUS.lobby:
             logging.debug('Game in lobby')
-            game.queue.set_status(username, 'joined')
-            logging.debug('Statuses: {}'.format(game.queue.statuses))
+            game.set_user_status(username, 'joined')
 
             if game.queue.is_complete:
                 game.status = GAME_STATUS.playing
