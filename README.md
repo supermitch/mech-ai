@@ -16,7 +16,7 @@ the decisions. The clients are the players.
 ### Google App Engine (GAE)
 
 The server is written using Google App Engine. Which means the server is
-written in Python 2.7.x
+written in Python 2.7.x!
 
 GAE Documentation: https://cloud.google.com/appengine/docs/python/
 
@@ -52,8 +52,8 @@ by authentication headers, so you need to provide your username and access token
 
 Precedence: Arguments > local_config.py > Environment variables
 
-After registering a new username you'll need to restart your client with those
-settings.
+After registering a new username you'll be given the option of loading
+those settings for the session.
 
 #### Environment
 
