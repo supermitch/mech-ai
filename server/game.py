@@ -49,7 +49,7 @@ class Game(object):
         self.transactions.append({
             'move': None,
             'message': (True, 'Initial state'),
-            'state': game.state.jsonable,
+            'state': self.state.jsonable,
         })
 
     @property
