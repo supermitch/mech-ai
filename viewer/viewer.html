@@ -20,6 +20,18 @@
             ctx.drawImage(img,0,0);
           };
           img.src = 'images/madcat.gif';
+
+          var icon_play = new Image();
+          icon_play.onload = function(){
+            ctx.drawImage(icon_play, 0, canvas.height - 28);
+          };
+          icon_play.src = 'images/icon_play.png';
+
+          var icon_pause = new Image();
+          icon_pause.onload = function(){
+            ctx.drawImage(icon_pause, 28, canvas.height - 28);
+          };
+          icon_pause.src = 'images/icon_pause.png';
         } else {
           console.log('Could not load canvas context');
         }
