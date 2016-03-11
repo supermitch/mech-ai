@@ -79,7 +79,7 @@ class CreateGameHandler(BaseHandler):
         players = json_object['players']
         name = json_object.get('name', 'Mech AI')
         rounds = json_object.get('rounds', 17)
-        map_name = json_object.get('map', 'Default')
+        map_name = json_object.get('map', 'default')
 
         game = Game(players=players, map_name=map_name, name=name, rounds=rounds)
         game_model = game_repo.persist(game)
