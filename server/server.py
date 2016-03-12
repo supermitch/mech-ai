@@ -7,7 +7,7 @@ from webapp2_extras import jinja2
 from webapp2_extras.routes import RedirectRoute, PathPrefixRoute
 
 import tokens
-import map_loader
+import maps
 from models import user_repo, game_repo
 from game import Game, GAME_STATUS
 
@@ -311,7 +311,7 @@ class ListUserPageHandler(BaseHandler):
 class ListMapsHandler(BaseHandler):
     """ Handler for template to list users. """
     def get(self):
-        context = {'maps': map_loader.list_maps()}
+        context = {'maps': maps.list_maps()}
         self.response.content_type = 'application/json'
         self.response.write(json.dumps(context))
 

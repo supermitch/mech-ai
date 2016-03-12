@@ -2,7 +2,7 @@ import datetime
 import json
 import logging
 
-import map_loader
+import maps
 import queue
 import state
 import utils
@@ -41,7 +41,7 @@ class Game(object):
         self.created = datetime.datetime.now()
 
         # These attributes are persisted in the state, not DB properties
-        map = map_loader.get_map(self.map_name)
+        map = maps.get_map(self.map_name)
         self.state = state.State(map=map, rounds=rounds, players=players)
 
         self.queue = queue.Queue(players=players)
