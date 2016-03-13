@@ -7,9 +7,8 @@ def list_maps():
 
 def get_map(map_name):
     """ Return the actual map for the given name. """
-    # TODO: Strip leading newline, if present?
     try:
-        return maps[map_name]
+        return maps[map_name].strip()  # No leading / trailing newlines
     except KeyError:
         logging.error('Could not find map name <{}> in maps: <{}>'
                       ''.format(map_name, list_maps()))
