@@ -271,6 +271,42 @@ class ListGamePageHandler(BaseHandler):
         self.render_template('games.html', **context)
 
 
+def find_game_by_id(id):
+    """
+    Return game result as a dictionary, for given query params.
+
+    Common functionality to list games by username & id. Both can be None.
+    """
+    result = game_repo.find_id(id)
+    if result:
+        context = {'game': {
+            'id': game_model.key.id(),
+            'name': game_model.name,
+            'players': game_model.players,
+            'map_name': game_model.map_name,
+            'status': game_model.status,
+            'created': game_model.created.isoformat(),
+            'transactions': json.loads(game_model.transactions),
+        }}
+        self.render_template('game.html', **context)
+    else:
+        error_message = 'Could not find game for id <{}>'.format(id)
+        logging.info(error_message)
+        webapp2.abort(404, detail=error_message)
+
+
+class ViewGamePageHandler(BaseHandler):
+    """ Handler for template to view a game by ID. """
+    def get(self, id):
+        results = find_game_by_id(id)['results']  # Extract inner contents
+        context = {
+            'games': results,
+            'username': username,
+            'id': id,
+        }
+        self.render_template('games.html', **context)
+
+
 def list_users_by_username(username):
     """
     Return user results as a dictionary, for given query params.

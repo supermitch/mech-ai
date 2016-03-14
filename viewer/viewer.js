@@ -29,7 +29,7 @@ function draw(){
       };
       icon_pause.src = 'images/icon_pause.png';
 
-      $.getJSON("http://localhost:8080/api/v1/games/5066549580791808", function(data) {
+      $.getJSON("http://127.0.0.1:8080/api/v1/games/5066549580791808", function(data) {
         console.log(data);
       });
     }

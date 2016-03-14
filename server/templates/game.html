@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Games List | Mech-AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p><a href="/">Home</a></p>
+
+      <h1>Mech-AI</h1>
+
+      <h2>Game Viewer</h2>
+
+      <p>{{ game.name }}</p>
+      <p>{{ game.id }}</p>
+      <p>{{ game.created }}</p>
+      <p>Players:</p>
+
+      <ul>
+        {% for player in game.players %}
+        <li><a href="/games/?user={{player}}">{{ player }}</a></li>
+        {% endfor %}]
+      </ul>
+
+      <p><a href="/games/create/">Create new game</a></p>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  </body>
+</html>
