@@ -23,20 +23,18 @@
 
       <h2>Game Viewer</h2>
 
-      <p>{{ game.name }}</p>
-      <p>{{ game.id }}</p>
-      <p>{{ game.created }}</p>
+      <p>Game name: {{ game.name }}</p>
+      <p>ID: {{ game.id }}</p>
+      <p>Date: {{ game.created }}</p>
       <p>Players:</p>
-
       <ul>
         {% for player in game.players %}
         <li><a href="/games/?user={{player}}">{{ player }}</a></li>
-        {% endfor %}]
+        {% endfor %}
       </ul>
 
       <canvas id="tutorial" width="450" height="450"></canvas>
 
-      <p><a href="/games/create/">Create new game</a></p>
     </div>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   </body>
