@@ -1,4 +1,4 @@
-function draw(){
+function draw() {
     var canvas = document.getElementById('tutorial');
     if (!canvas.getContext) {
       console.log('Could not load canvas context');
@@ -15,19 +15,19 @@ function draw(){
       img.onload = function(){
         ctx.drawImage(img,0,0);
       };
-      img.src = 'images/madcat.gif';
+      img.src = '/images/madcat.gif';
 
       var icon_play = new Image();
       icon_play.onload = function(){
         ctx.drawImage(icon_play, 0, canvas.height - 28);
       };
-      icon_play.src = 'images/icon_play.png';
+      icon_play.src = '/images/icon_play.png';
 
       var icon_pause = new Image();
       icon_pause.onload = function(){
         ctx.drawImage(icon_pause, 28, canvas.height - 28);
       };
-      icon_pause.src = 'images/icon_pause.png';
+      icon_pause.src = '/images/icon_pause.png';
 
       $.getJSON("http://127.0.0.1:8080/api/v1/games/5066549580791808", function(data) {
         console.log(data);
