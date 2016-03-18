@@ -2,17 +2,21 @@ function draw() {
     var canvas = document.getElementById('tutorial');
 
     if (!canvas.getContext) {
-      console.log('Could not load canvas context');
+        console.log('Could not load canvas context');
     } else {
+        draw_controls(canvas);
+        render_tiles(canvas);
 
-      draw_controls(canvas);
-      render_tiles(canvas);
-
-      $.getJSON("http://127.0.0.1:8080/api/v1/games/5066549580791808", function(data) {
-          console.log('Data:', data);
-          var transactions = extract_transactions(data);
-          console.log('Transactions:', transactions);
-      });
+        $.when($.getJSON('http://127.0.0.1:8080/api/v1/games/5066549580791808', function () {
+            console.log('Initiated');
+        }, function () {
+            console.log('Error loading game JSON data');
+        })).then(function (data) {
+            console.log('Get JSON ready!');
+            console.log('Data:', data);
+            var transactions = extract_transactions(data);
+            console.log('Transactions:', transactions);
+        });
     }
 }
 
