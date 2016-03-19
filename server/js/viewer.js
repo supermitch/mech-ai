@@ -47,21 +47,33 @@ function render_map(canvas, map) {
     var red = 'rgb(200, 0, 0)';
     var green = 'rgb(0, 200, 0)';
     var blue = 'rgb(0, 0, 200)';
+    var light = 'rgb(200, 200, 200)';
 
     console.log('Map:', JSON.stringify(map));
     var rows = map.split('\n');
     console.log('Rows:', rows);
 
+    var col = 0;
     rows.forEach(function (row) {
-        for (var x = 0; x < row.length; x++) {
-            var c = row.charAt(x);
-            console.log(x, c);
+        col++;
+        for (var i = 0; i < row.length; i++) {
+            var c = row.charAt(i);
+            switch (c) {
+                case '.': colour = light; break;
+                case '*': colour = blue;  break;
+                case '@': colour = green; break;
+                default:  colour = red;
+            }
+            ctx.fillStyle = colour;
+            x = i * w;
+            y = col * h;
+            ctx.fillRect(x, y, w, h);
+
+            ctx.lineWidth = 0.2;
+            ctx.strokeRect(x, y, w, h);
         }
     });
 
-    ctx.fillStyle = red;
-    x = 300; y = 200;
-    ctx.fillRect (x, y, w, h);
 
     ctx.fillStyle = blue;
     x = 100; y = 50;
