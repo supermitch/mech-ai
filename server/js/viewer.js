@@ -5,13 +5,13 @@ function draw() {
         console.log('Could not load canvas context');
     } else {
         draw_ui(canvas);
-        draw_controls(canvas);
+        var hit_regions = draw_controls(canvas);
 
-        $.when($.getJSON('http://127.0.0.1:8080/api/v1/games/5066549580791808', function () {
+        $.when($.getJSON('http://127.0.0.1:8080/api/v1/games/5066549580791808', function() {
             console.log('Initiated');
-        }, function () {
+        }, function() {
             console.log('Error loading game JSON data');
-        })).then(function (data) {
+        })).then(function(data) {
             console.log('Get JSON ready!');
             console.log('Data:', data);
             var transactions = extract_transactions(data);
@@ -19,6 +19,12 @@ function draw() {
             render_map(canvas, transactions[0].state.map);
         });
     }
+
+    canvas.addEventListener('click', function(e){
+        if (point_collision(e, hit_regions)) {
+            alert('Hit a button');
+        }
+    });
 }
 
 function draw_ui(canvas) {
@@ -36,6 +42,12 @@ function draw_controls(canvas) {
     var icon_pause = new Image();
     icon_pause.onload = function(){ ctx.drawImage(icon_pause, 28, canvas.height - 28); };
     icon_pause.src = '/images/icon_pause.png';
+
+    var hit_regions = {
+        'play': {'x': 0, 'y': canvas.height - 28, 'w': icon_play.width, 'h': icon_play.height},
+        'pause': {'x': 28, 'y': canvas.height - 28, 'w': icon_play.width, 'h': icon_play.height}
+    };
+    return hit_regions
 }
 
 function render_map(canvas, map) {
@@ -54,7 +66,7 @@ function render_map(canvas, map) {
     console.log('Rows:', rows);
 
     var col = 0;
-    rows.forEach(function (row) {
+    rows.forEach(function(row) {
         col++;
         for (var i = 0; i < row.length; i++) {
             var c = row.charAt(i);
@@ -83,4 +95,18 @@ function render_map(canvas, map) {
 function extract_transactions(data) {
     // Only return the transactions we need.
     return data.results[0].transactions;
+}
+
+function point_collision(e, hit_regions) {
+    console.log(e);
+    for (var key in hit_regions) {
+        if (hit_regions.hasOwnProperty(key)) {
+            region = hit_regions[key];
+            if (region.y - region.width < e.clientX && region.x + region.width > e.clientX &&
+                region.y - region.height < e.clientY && region.y + region.height > e.clientY) {
+                return true;
+            }
+        }
+    }
+    return false;  // No region was under mouse click
 }
