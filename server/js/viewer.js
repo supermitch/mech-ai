@@ -1,6 +1,8 @@
 function draw() {
     var canvas = document.getElementById('tutorial');
 
+    var transactions;
+
     if (!canvas.getContext) {
         console.log('Could not load canvas context');
     } else {
@@ -14,9 +16,10 @@ function draw() {
         })).then(function(data) {
             console.log('Get JSON ready!');
             console.log('Data:', data);
-            var transactions = extract_transactions(data);
+            transactions = extract_transactions(data);  // Global?
             console.log('Transactions:', transactions);
             render_map(canvas, transactions[0].state.map);
+            var current_frame = 0;
         });
     }
 
@@ -24,6 +27,8 @@ function draw() {
         if (point_collision(e, hit_regions)) {
             alert('Hit a button');
         }
+        current_frame = 0;
+        render_players(transactions[current_frame].state.players);
     });
 }
 
@@ -90,6 +95,14 @@ function render_map(canvas, map) {
     ctx.fillStyle = blue;
     x = 100; y = 50;
     ctx.fillRect (x, y, w, h);
+}
+
+
+function render_players(players) {
+    for (var name in players) {
+        var player = players[name];
+        console.log('Player:', player);
+    };
 }
 
 function extract_transactions(data) {
