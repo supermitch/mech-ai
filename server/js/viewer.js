@@ -20,6 +20,7 @@ function draw() {
             console.log('Transactions:', transactions);
             render_map(canvas, transactions[0].state.map);
             var current_frame = 0;
+            render_players(canvas, transactions[current_frame].state.players);
         });
     }
 
@@ -27,8 +28,8 @@ function draw() {
         if (point_collision(e, hit_regions)) {
             alert('Hit a button');
         }
-        current_frame = 0;
-        render_players(transactions[current_frame].state.players);
+        current_frame += 1;
+        render_players(canvas, transactions[current_frame].state.players);
     });
 }
 
@@ -98,10 +99,13 @@ function render_map(canvas, map) {
 }
 
 
-function render_players(players) {
+function render_players(canvas, players) {
     for (var name in players) {
         var player = players[name];
         console.log('Player:', player);
+        var i = player.pos[0];
+        var j = player.pos[1];
+        draw_mech(canvas, i * 10, j * 10, 'North');
     };
 }
 
@@ -122,4 +126,18 @@ function point_collision(e, hit_regions) {
         }
     }
     return false;  // No region was under mouse click
+}
+
+function draw_mech(canvas, x, y, orientation) {
+
+    var mech = new Image();
+    mech.src = '/images/right_triangle.png';
+    mech.onload = function(){
+        var ctx = canvas.getContext('2d');
+        ctx.save();
+        ctx.translate(canvas.width/2, canvas.height/2);  // move to the center of the canvas
+        ctx.rotate(180 * Math.PI/180);  // rotate the canvas to the specified degrees
+        ctx.drawImage(mech, x, y);
+        ctx.restore();
+    };
 }
