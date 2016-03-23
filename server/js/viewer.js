@@ -105,7 +105,7 @@ function render_players(canvas, players) {
         console.log('Player:', player);
         var i = player.pos[0];
         var j = player.pos[1];
-        draw_mech(canvas, i * 10, j * 10, 'North');
+        draw_mech(canvas, i * 10 + 30, j * 10 + 10, 'North');
     };
 }
 
@@ -136,8 +136,11 @@ function draw_mech(canvas, x, y, orientation) {
         var ctx = canvas.getContext('2d');
         ctx.save();
         ctx.translate(canvas.width/2, canvas.height/2);  // move to the center of the canvas
-        ctx.rotate(180 * Math.PI/180);  // rotate the canvas to the specified degrees
-        ctx.drawImage(mech, x, y);
+        // ctx.rotate(180 * Math.PI/180);  // rotate the canvas to the specified degrees
+        var width = 15;
+        var height = 15;
+        ctx.translate(-canvas.width/2, -canvas.height/2);
+        ctx.drawImage(mech, x, y, width, height);
         ctx.restore();
     };
 }
