@@ -2,6 +2,7 @@ function draw() {
     var canvas = document.getElementById('tutorial');
 
     var transactions;
+    var current_frame;
 
     if (!canvas.getContext) {
         console.log('Could not load canvas context');
@@ -19,17 +20,17 @@ function draw() {
             transactions = extract_transactions(data);  // Global?
             console.log('Transactions:', transactions);
             render_map(canvas, transactions[0].state.map);
-            var current_frame = 0;
+            current_frame = 0;
             render_players(canvas, transactions[current_frame].state.players);
         });
     }
 
     canvas.addEventListener('click', function(e){
         if (point_collision(e, hit_regions)) {
-            alert('Hit a button');
+            current_frame += 1;
+            alert('Hit a button, frame is: ' + current_frame);
+            render_players(canvas, transactions[current_frame].state.players);
         }
-        current_frame += 1;
-        render_players(canvas, transactions[current_frame].state.players);
     });
 }
 
@@ -116,9 +117,11 @@ function extract_transactions(data) {
 
 function point_collision(e, hit_regions) {
     console.log(e);
-    for (var key in hit_regions) {
+    return true;
+    for (var key in hit_regions) {  // Iterate over keys in object
         if (hit_regions.hasOwnProperty(key)) {
             region = hit_regions[key];
+            return true;
             if (region.y - region.width < e.clientX && region.x + region.width > e.clientX &&
                 region.y - region.height < e.clientY && region.y + region.height > e.clientY) {
                 return true;
