@@ -234,7 +234,15 @@ def list_game_by_username_and_id(username, id):
 
     Common functionality to list games by username & id. Both can be None.
     """
-    results = game_repo.find_by_username_and_id(username, id)
+    if id:
+        logging.debug('in here')
+        results = game_repo.find_by_id(id)
+    elif username:
+        results = game_repo.find_by_username(username)
+    else:
+        message = 'Tried to list games without username or ID'
+        webapp2.abort(404, detail=message)
+
     results = results if results else []
     return {
         'results': [{

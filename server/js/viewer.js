@@ -15,21 +15,19 @@ function draw() {
         }, function() {
             console.log('Error loading game JSON data');
         })).then(function(data) {
-            console.log('Get JSON ready!');
             console.log('Data:', data);
             transactions = extract_transactions(data);  // Global?
             console.log('Transactions:', transactions);
-            render_map(canvas, transactions[0].state.map);
             current_frame = 0;
-            render_players(canvas, transactions[current_frame].state.players);
+            render_game(canvas, transactions, frame);
         });
     }
 
     canvas.addEventListener('click', function(e){
         if (point_collision(e, hit_regions)) {
             current_frame += 1;
-            alert('Hit a button, frame is: ' + current_frame);
-            render_players(canvas, transactions[current_frame].state.players);
+            console.log('Click! Current frame is: ' + current_frame);
+            render_game(canvas, transactions, current_frame);
         }
     });
 }
@@ -55,6 +53,11 @@ function draw_controls(canvas) {
         'pause': {'x': 28, 'y': canvas.height - 28, 'w': icon_play.width, 'h': icon_play.height}
     };
     return hit_regions
+}
+
+function render_game(canvas, transactions, frame) {
+    render_map(canvas, transactions[0].state.map);
+    render_players(canvas, transactions[frame].state.players);
 }
 
 function render_map(canvas, map) {
@@ -99,7 +102,6 @@ function render_map(canvas, map) {
     ctx.fillRect (x, y, w, h);
 }
 
-
 function render_players(canvas, players) {
     for (var name in players) {
         var player = players[name];
@@ -107,6 +109,22 @@ function render_players(canvas, players) {
         var i = player.pos[0];
         var j = player.pos[1];
         draw_mech(canvas, i * 10 + 30, j * 10 + 10, 'North');
+    };
+}
+
+function draw_mech(canvas, x, y, orientation) {
+    var mech = new Image();
+    mech.src = '/images/right_triangle.png';
+    mech.onload = function(){
+        var ctx = canvas.getContext('2d');
+        ctx.save();
+        ctx.translate(canvas.width/2, canvas.height/2);  // move to the center of the canvas
+        // ctx.rotate(180 * Math.PI/180);  // rotate the canvas to the specified degrees
+        var width = 15;
+        var height = 15;
+        ctx.translate(-canvas.width/2, -canvas.height/2);
+        ctx.drawImage(mech, x, y, width, height);
+        ctx.restore();
     };
 }
 
@@ -129,21 +147,4 @@ function point_collision(e, hit_regions) {
         }
     }
     return false;  // No region was under mouse click
-}
-
-function draw_mech(canvas, x, y, orientation) {
-
-    var mech = new Image();
-    mech.src = '/images/right_triangle.png';
-    mech.onload = function(){
-        var ctx = canvas.getContext('2d');
-        ctx.save();
-        ctx.translate(canvas.width/2, canvas.height/2);  // move to the center of the canvas
-        // ctx.rotate(180 * Math.PI/180);  // rotate the canvas to the specified degrees
-        var width = 15;
-        var height = 15;
-        ctx.translate(-canvas.width/2, -canvas.height/2);
-        ctx.drawImage(mech, x, y, width, height);
-        ctx.restore();
-    };
 }
