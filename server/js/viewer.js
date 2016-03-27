@@ -2,7 +2,7 @@ function draw() {
     var canvas = document.getElementById('tutorial');
 
     var transactions;
-    var current_frame;
+    var frame;
 
     if (!canvas.getContext) {
         console.log('Could not load canvas context');
@@ -18,16 +18,16 @@ function draw() {
             console.log('Data:', data);
             transactions = extract_transactions(data);  // Global?
             console.log('Transactions:', transactions);
-            current_frame = 0;
+            frame = 0;
             render_game(canvas, transactions, frame);
         });
     }
 
     canvas.addEventListener('click', function(e){
         if (point_collision(e, hit_regions)) {
-            current_frame += 1;
-            console.log('Click! Current frame is: ' + current_frame);
-            render_game(canvas, transactions, current_frame);
+            frame += 1;
+            console.log('Click! Current frame is: ' + frame);
+            render_game(canvas, transactions, frame);
         }
     });
 }
