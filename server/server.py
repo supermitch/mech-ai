@@ -236,7 +236,7 @@ def list_game_by_username_and_id(username, id):
     """
     if id:
         logging.debug('in here')
-        results = game_repo.find_by_id(id)
+        results = [game_repo.find_by_id(id)]
     elif username:
         results = game_repo.find_by_username(username)
     else:

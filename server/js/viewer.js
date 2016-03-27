@@ -10,7 +10,7 @@ function draw() {
         draw_ui(canvas);
         var hit_regions = draw_controls(canvas);
 
-        $.when($.getJSON('http://127.0.0.1:8080/api/v1/games/5066549580791808', function() {
+        $.when($.getJSON('http://127.0.0.1:8080/api/v1/games/6192449487634432', function() {
             console.log('Initiated');
         }, function() {
             console.log('Error loading game JSON data');
