@@ -69,7 +69,7 @@ function render_map(canvas, map) {
     var red = 'rgb(200, 0, 0)';
     var green = 'rgb(0, 200, 0)';
     var blue = 'rgb(0, 0, 200)';
-    var light = 'rgb(200, 200, 200)';
+    var light = 'rgb(220, 220, 220)';
 
     console.log('Map:', JSON.stringify(map));
     var rows = map.split('\n');
@@ -103,18 +103,33 @@ function render_map(canvas, map) {
 }
 
 function render_players(canvas, players) {
+    var counter = 0;
     for (var name in players) {
+        counter += 1;
         var player = players[name];
         console.log('Player:', player);
         var i = player.pos[0];
         var j = player.pos[1];
-        draw_mech(canvas, i * 10 + 30, j * 10 + 10, 'North');
+        draw_mech(canvas, i * 10 + 30, j * 10 + 10, 'North', counter);
     };
 }
 
-function draw_mech(canvas, x, y, orientation) {
+function draw_mech(canvas, x, y, orientation, counter) {
     var mech = new Image();
-    mech.src = '/images/right_triangle.png';
+    switch (counter) {
+        case 1:
+            sprite = '/images/right_mech_red.png'; break;
+        case 2:
+            sprite = '/images/right_mech_blue.png'; break;
+        case 3:
+            sprite = '/images/right_mech_grey.png'; break;
+        case 4:
+            sprite = '/images/right_mech_green.png'; break;
+        default:
+            sprite = '/images/right_triangle.png';
+            console.log('ERROR: Too many players in this game!');
+    }
+    mech.src = sprite;
     mech.onload = function(){
         var ctx = canvas.getContext('2d');
         ctx.save();
